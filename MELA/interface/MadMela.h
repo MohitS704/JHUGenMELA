@@ -98,19 +98,18 @@ namespace madMela{
 
         void ggFSIG_smatrixhel_(int pdgs[], int& procid, const int& npdg, double* p, double& alphas, double& scale2, int& nhel, double& ans);
         void ggFSIG_update_all_coup_();
-        void ggFSIG_get_pdg_order_(int pdg[6][3], int allproc[3]);
 
         void qq4lSIG_smatrixhel_(int pdgs[], int& procid, const int& npdg, double* p, double& alphas, double& scale2, int& nhel, double& ans);
         void qq4lSIG_update_all_coup_();
-        void qq4lSIG_get_pdg_order_(int pdg[6][12], int allproc[12]);
 
         void qq4lBKG_smatrixhel_(int pdgs[], int& procid, const int& npdg, double* p, double& alphas, double& scale2, int& nhel, double& ans);
         void qq4lBKG_update_all_coup_();
-        void qq4lBKG_get_pdg_order_(int pdg[6][12], int allproc[12]);
 
         void qq4lBSI_smatrixhel_(int pdgs[], int& procid, const int& npdg, double* p, double& alphas, double& scale2, int& nhel, double& ans);
         void qq4lBSI_update_all_coup_();
-        void qq4lBSI_get_pdg_order_(int pdg[6][12], int allproc[12]);
+
+        void vbsSIG_smatrixhel_(int pdgs[], int& procid, const int& npdg, double* p, double& alphas, double& scale2, int& nhel, double& ans);
+        void vbsSIG_update_all_coup_();
     }
 
     typedef std::pair<std::function<void(int*, int&, const int&, double*, double&, double&, int&, double&)>, std::function<void()>> MG_process_double;

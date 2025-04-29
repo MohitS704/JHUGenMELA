@@ -409,6 +409,12 @@ void madMela::initialize_madMELA(){
         qq4lBSI_update_all_coup_,
     };
     (*updateMap)[std::make_pair(TVar::bkgZZ_SMHiggs, TVar::ZZQQB)] = qq4lBSI;
+
+    MG_process_double vbsSIG = {
+        vbsSIG_smatrixhel_,
+        vbsSIG_update_all_coup_,
+    };
+    (*updateMap)[std::make_pair(TVar::HSMHiggs, TVar::JJEW)] = vbsSIG;
 }
 
 void madMela::update_all_coup(const TVar::Process& process, const TVar::Production& production){
