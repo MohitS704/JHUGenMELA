@@ -37,7 +37,7 @@ IgnorePyBind=FALSE
 cd $(dirname ${BASH_SOURCE[0]})
 
 MELADIR="$(readlink -f .)"
-MCFMVERSION=mcfm_710
+MCFMVERSION=mcfm_711
 MGVERSION=2
 declare -i doDeps=0
 declare -i doPrintEnv=0
@@ -237,6 +237,7 @@ if [[ $doDeps -eq 1 ]]; then
 fi
 
 pushd ${MELADIR}/fortran &> /dev/null
+echo Using args "${setupArgs[@]}"
 make "${setupArgs[@]}"
 popd &> /dev/null
 
