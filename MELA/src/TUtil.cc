@@ -4198,6 +4198,8 @@ void TUtil::SetMCFMAZffCouplings(bool useBSM, AZffCouplings const* Zcouplings){
     anomzffcouplings_.cranou = (Zcouplings->AZffcoupl)[gAZff_uZRH][0];
     anomzffcouplings_.clanod = (Zcouplings->AZffcoupl)[gAZff_dZLH][0];
     anomzffcouplings_.cranod = (Zcouplings->AZffcoupl)[gAZff_dZRH][0];
+    anomzffcouplings_.clanot = (Zcouplings->AZffcoupl)[gAZff_tZLH][0];
+    anomzffcouplings_.cranot = (Zcouplings->AZffcoupl)[gAZff_tZRH][0];
   }
   else{
     // SM

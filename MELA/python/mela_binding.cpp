@@ -1465,6 +1465,10 @@ PYBIND11_MODULE(Mela, m) {
 
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, clanod, gAZff_dZLH)
 
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, cranot, gAZff_tZRH)
+
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, clanot, gAZff_tZLH)
+
         MAKE_COUPLING_MADMELA(mdl_ch, gMDL_ch)
         MAKE_COUPLING_MADMELA(mdl_chbox, gMDL_chbox)
         MAKE_COUPLING_MADMELA(mdl_chdd, gMDL_chdd)
