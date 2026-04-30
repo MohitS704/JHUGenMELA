@@ -1,6 +1,6 @@
 {
   TString LIBCOLLIER = "libcollier.so";
-  TString LIBMCFM = "libmcfm_708.so";
+  TString LIBMCFM = "libmcfm_711.so";
   TString LIBJHUGENMELA = "libjhugenmela.so";
   TString LIBMELA = "libJHUGenMELAMELA.so";
 

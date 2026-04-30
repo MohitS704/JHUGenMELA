@@ -1,5 +1,6 @@
 #include "MELAStreamHelpers.hh"
 #include "ZZMatrixElement.h"
+#include "MadMela.h"
 #include "TLorentzRotation.h"
 
 
@@ -138,6 +139,9 @@ void ZZMatrixElement::set_LHAgrid(const char* path, int pdfmember){ Xcal2.Set_LH
 void ZZMatrixElement::set_RenFacScaleMode(TVar::EventScaleScheme renormalizationSch, TVar::EventScaleScheme factorizationSch, double ren_sf, double fac_sf){
   Xcal2.SetRenFacScaleMode(renormalizationSch, factorizationSch, ren_sf, fac_sf);
 }
+const TVar::event_scales_type& ZZMatrixElement::get_RenFacScaleMode() const{
+  return Xcal2.GetRenFacScaleMode();
+}
 void ZZMatrixElement::set_CandidateDecayMode(TVar::CandidateDecayMode mode){ Xcal2.SetCandidateDecayMode(mode); }
 void ZZMatrixElement::set_PrimaryHiggsMass(double mh){ Xcal2.SetPrimaryHiggsMass(mh); }
 void ZZMatrixElement::set_CurrentCandidateFromIndex(unsigned int icand){ Xcal2.SetCurrentCandidateFromIndex(icand); }
@@ -245,10 +249,14 @@ void ZZMatrixElement::set_SpinZeroCouplings(
   double selfDHt4t4coupl[nSupportedHiggses][SIZE_HQQ][2],
   double selfDHzzcoupl[nSupportedHiggses][SIZE_HVV][2],
   double selfDHwwcoupl[nSupportedHiggses][SIZE_HVV][2],
+  double selfDHHHcoupl[SIZE_HHH],
   double selfDHzzLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ],
   double selfDHwwLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ],
   int selfDHzzCLambda_qsq[nSupportedHiggses][SIZE_HVV_CQSQ],
   int selfDHwwCLambda_qsq[nSupportedHiggses][SIZE_HVV_CQSQ],
+  double selfDHvvLambda_ff[nSupportedHiggses][SIZE_HVV_LAMBDAFF],
+  int selfDHvvn_ff[nSupportedHiggses][SIZE_HVV_NFF],
+  double selfDSMEFTSimcoupl[SIZE_SMEFT],
   bool diffHWW
   ){
   Xcal2.AllowSeparateWWCouplings(diffHWW);
@@ -272,8 +280,15 @@ void ZZMatrixElement::set_SpinZeroCouplings(
       selfD_SpinZeroCouplings->SetHVVSignCQ2(ik, selfDHzzCLambda_qsq[jh-1][ik], false, jh);
       selfD_SpinZeroCouplings->SetHVVSignCQ2(ik, selfDHwwCLambda_qsq[jh-1][ik], true, jh);
     }
+    for (int ic=0; ic<SIZE_HVV_LAMBDAFF; ic++){
+      selfD_SpinZeroCouplings->SetHVVLambdaFF(ic,selfDHvvLambda_ff[jh-1][ic],jh);
+      selfD_SpinZeroCouplings->SetHVVLambdaN(ic,selfDHvvn_ff[jh-1][ic],jh);
+    } 
+    for (int ic=0; ic<SIZE_SMEFT; ic++) selfD_SpinZeroCouplings->SetSMEFTSimCouplings(ic, selfDSMEFTSimcoupl[ic]);
+    for (int ic=0; ic<SIZE_HHH; ic++) selfD_SpinZeroCouplings->SetHHHCouplings(ic, selfDHHHcoupl[ic]);
   }
 }
+
 void ZZMatrixElement::set_SpinZeroContact(
   double selfDHzzpcoupl[SIZE_HVV][2],
   double selfDHzpzpcoupl[SIZE_HVV][2],

@@ -56,6 +56,7 @@ public:
     ); // Sets melaCand in Xcal2 to a temporary candidate, without pushing this candidate to candList of Xcal2 for storage and deletion at a later stage
   //
   void set_RenFacScaleMode(TVar::EventScaleScheme renormalizationSch, TVar::EventScaleScheme factorizationSch, double ren_sf, double fac_sf); // Sets variables exclusive to Xcal2
+  const TVar::event_scales_type& get_RenFacScaleMode() const;
   void set_LHAgrid(const char* path, int pdfmember=0); // Sets variable exclusive to Xcal2
   void set_PrimaryHiggsMass(double mh);
   void set_CandidateDecayMode(TVar::CandidateDecayMode mode); // Sets variables exclusive to Xcal2
@@ -92,10 +93,14 @@ public:
     double selfDHt4t4coupl[nSupportedHiggses][SIZE_HQQ][2],
     double selfDHzzcoupl[nSupportedHiggses][SIZE_HVV][2],
     double selfDHwwcoupl[nSupportedHiggses][SIZE_HVV][2],
+    double selfDHHHcoupl[SIZE_HHH],
     double selfDHzzLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ],
     double selfDHwwLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ],
     int selfDHzzCLambda_qsq[nSupportedHiggses][SIZE_HVV_CQSQ],
     int selfDHwwCLambda_qsq[nSupportedHiggses][SIZE_HVV_CQSQ],
+    double selfDHvvLambda_ff[nSupportedHiggses][SIZE_HVV_LAMBDAFF],
+    int selfDHvvn_ff[nSupportedHiggses][SIZE_HVV_NFF],
+    double selfDSMEFTSimcoupl[SIZE_SMEFT],
     bool diffHWW = false
     );
   void set_SpinZeroContact(

@@ -55,7 +55,8 @@ namespace TVar{
   enum MatrixElement{
     MCFM = 0,
     JHUGen = 1,
-    ANALYTICAL = 2
+    ANALYTICAL = 2,
+    MADGRAPH = 3
   };
   enum Production{
     ZZGG,
@@ -65,7 +66,6 @@ namespace TVar{
 
     ttH, // ttH
     bbH, // bbH
-
     JQCD, // ? + 1 jet
 
     JJQCD, // SBF
@@ -100,7 +100,6 @@ namespace TVar{
     Lep_WH_TU,
 
     GammaH, // gammaH, stable A (could implement S and TU in the future
-    //
     nProductions
   };
   enum LeptonInterference{
@@ -118,7 +117,8 @@ namespace TVar{
     NoPropagator=0,
     RunningWidth=1,
     FixedWidth=2,
-    CPS=3
+    CPS=3,
+    AltRunningWidth=4
   };
 
   enum Process{
