@@ -755,7 +755,7 @@ double TEvtProb::XsecCalc_VVXVV(){
   bool calculateME=false;
   if (useMCFM){
     if (verbosity>=TVar::DEBUG) MELAout << "TEvtProb::XsecCalc_VVXVV: Try MCFM" << endl;
-    needBSMHiggs = true;
+    needBSMHiggs = (CheckSelfDCouplings_HVV() || CheckSelfDCouplings_AZff() || CheckSelfDCouplings_HHH() || CheckSelfDCouplings_LAMBDAFF());
     needATQGC = CheckSelfDCouplings_aTQGC();
     if (needBSMHiggs || needATQGC) SetLeptonInterf(TVar::InterfOn); // All anomalous coupling computations have to use lepton interference
 
