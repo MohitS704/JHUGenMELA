@@ -39,6 +39,13 @@ namespace{
 
     SIZE_HGG /*!<  The size of the array **(Value=3) */
   };
+  enum CouplingIndex_as_HVV{
+    as_HVV_1,
+    as_HVV_2,
+    as_HVV_3,
+
+    SIZE_as_HVV
+  };
 
   /**
    * @brief This is the enumerator for the couplings between the Higgs and the vector bosons (Z/Z' & W/W')

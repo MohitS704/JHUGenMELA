@@ -447,6 +447,18 @@ double TEvtProb::XsecCalc_XVV(){
     // all the possible couplings
     double Hggcoupl[SIZE_HGG][2] ={ { 0 } };
     double Hvvcoupl[SIZE_HVV][2] ={ { 0 } };
+    double Hvv_as_coupl[SIZE_as_HVV][2] = { { 0 } };
+    double HvvPLcoupl = 0;
+    double HvvfPerpcoupl = 0;
+
+    double Hggcoupls[2][SIZE_HGG][2] ={{ { 0 } }};
+    double Hvvcoupls[2][SIZE_HVV][2] ={{ { 0 } }};
+    double HvvPLcoupls[2] ={0};
+    double HvvfPerpcoupls[2] ={0};
+    double Hvv_as_coupls[2][SIZE_as_HVV][2] = {{ { 0 } }};
+
+    int calc_fL = 0;
+    int calc_fAmp = 0;
     double HvvLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ] ={ { 0 } };
     int HvvCLambda_qsq[SIZE_HVV_CQSQ] ={ 0 };
 
@@ -539,7 +551,15 @@ double TEvtProb::XsecCalc_XVV(){
       isSpinZero = true;
     }
     else if (process == TVar::SelfDefine_spin0){
+      calc_fL = selfDSpinZeroCoupl.calc_fL;
+      HvvPLcoupl = selfDSpinZeroCoupl.HvvPLcoupl;
+      HvvfPerpcoupl = selfDSpinZeroCoupl.HvvfPerpcoupl;
       for (int j=0; j<2; j++){
+        /*polarization study*/
+        for (int i=0; i<SIZE_as_HVV; i++){
+          Hvv_as_coupl[i][j] = (selfDSpinZeroCoupl.Hvv_as_coupl)[i][j];
+        }
+        /*polarization study*/
         for (int i=0; i<SIZE_HGG; i++) Hggcoupl[i][j] = (selfDSpinZeroCoupl.Hggcoupl)[i][j];
         for (int i=0; i<SIZE_HVV; i++){
           Hvvcoupl[i][j] = (selfDSpinZeroCoupl.Hzzcoupl)[i][j];
@@ -666,6 +686,7 @@ double TEvtProb::XsecCalc_XVV(){
           Gvpvpcoupl[i][j] = (selfDSpinTwoCoupl.Gvpvpcoupl)[i][j];
         }
       }
+      calc_fAmp = selfDSpinTwoCoupl.calc_fAmp;
       isSpinTwo = true;
     }
 
@@ -698,14 +719,14 @@ double TEvtProb::XsecCalc_XVV(){
 
     if (isSpinZero){
       SetJHUGenSpinZeroGGCouplings(Hggcoupl);
-      SetJHUGenSpinZeroVVCouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, HvvCLambda_qsq, HvvLambda_qsq, false);
+      SetJHUGenSpinZeroVVCouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, HvvCLambda_qsq, HvvLambda_qsq, false, HvvPLcoupl,HvvfPerpcoupl, Hvv_as_coupl, calc_fL);
       SetJHUGenVprimeContactCouplings(Zpffcoupl, Wpffcoupl);
       SetZprimeMassWidth(M_Zprime, Ga_Zprime);
       SetWprimeMassWidth(M_Wprime, Ga_Wprime);
     }
     else if (isSpinOne) SetJHUGenSpinOneCouplings(Zqqcoupl, Zvvcoupl);
     else if (isSpinTwo){
-      SetJHUGenSpinTwoCouplings(Gggcoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, Gqqcoupl);
+      SetJHUGenSpinTwoCouplings(Gggcoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, Gqqcoupl, calc_fAmp);
       SetJHUGenVprimeContactCouplings(Zpffcoupl, Wpffcoupl);
       SetZprimeMassWidth(M_Zprime, Ga_Zprime);
       SetWprimeMassWidth(M_Wprime, Ga_Wprime);
@@ -755,7 +776,7 @@ double TEvtProb::XsecCalc_VVXVV(){
   bool calculateME=false;
   if (useMCFM){
     if (verbosity>=TVar::DEBUG) MELAout << "TEvtProb::XsecCalc_VVXVV: Try MCFM" << endl;
-    needBSMHiggs = true;
+    needBSMHiggs = (CheckSelfDCouplings_HVV() || CheckSelfDCouplings_AZff() || CheckSelfDCouplings_HHH() || CheckSelfDCouplings_LAMBDAFF());
     needATQGC = CheckSelfDCouplings_aTQGC();
     if (needBSMHiggs || needATQGC) SetLeptonInterf(TVar::InterfOn); // All anomalous coupling computations have to use lepton interference
 
@@ -825,6 +846,10 @@ double TEvtProb::XsecCalcXJJ(){
       double Hwwpcoupl[SIZE_HVV][2] = { { 0 } };
       double Hwpwpcoupl[SIZE_HVV][2] = { { 0 } };
       double Wpffcoupl[SIZE_Vpff][2] = { { 0 } };
+      double HvvPLcoupl = 0;
+      double HvvfPerpcoupl = 0;
+      double Hvv_as_coupl[SIZE_as_HVV][2] = { { 0 } };
+      int calc_fL = 0;
       double M_Zprime = -1;
       double Ga_Zprime = 0;
       double M_Wprime = -1;
@@ -863,8 +888,8 @@ double TEvtProb::XsecCalcXJJ(){
         }
         SetJHUGenDistinguishWWCouplings(selfDSpinZeroCoupl.separateWWZZcouplings);
       }
-      SetJHUGenSpinZeroVVCouplings(Hzzcoupl, Hzzpcoupl, Hzpzpcoupl, HzzCLambda_qsq, HzzLambda_qsq, false);
-      SetJHUGenSpinZeroVVCouplings(Hwwcoupl, Hwwpcoupl, Hwpwpcoupl, HwwCLambda_qsq, HwwLambda_qsq, true); // Set the WW couplings regardless of SetJHUGenDistinguishWWCouplings(false/true) because of how JHUGen handles this true flag.
+      SetJHUGenSpinZeroVVCouplings(Hzzcoupl, Hzzpcoupl, Hzpzpcoupl, HzzCLambda_qsq, HzzLambda_qsq, false, HvvPLcoupl,HvvfPerpcoupl, Hvv_as_coupl, calc_fL);
+      SetJHUGenSpinZeroVVCouplings(Hwwcoupl, Hwwpcoupl, Hwpwpcoupl, HwwCLambda_qsq, HwwLambda_qsq, true, HvvPLcoupl,HvvfPerpcoupl, Hvv_as_coupl, calc_fL); // Set the WW couplings regardless of SetJHUGenDistinguishWWCouplings(false/true) because of how JHUGen handles this true flag.
       SetJHUGenVprimeContactCouplings(Zpffcoupl, Wpffcoupl);
       SetZprimeMassWidth(M_Zprime, Ga_Zprime);
       SetWprimeMassWidth(M_Wprime, Ga_Wprime);
@@ -932,6 +957,12 @@ double TEvtProb::XsecCalc_VX(
     double Hvpvpcoupl[SIZE_HVV][2] = { { 0 } };
     double Zpffcoupl[SIZE_Vpff][2] = { { 0 } };
     double Wpffcoupl[SIZE_Vpff][2] = { { 0 } };
+
+    double HvvPLcoupl = 0;
+    double HvvfPerpcoupl = 0;
+    double Hvv_as_coupl[SIZE_as_HVV][2] = { { 0 } };
+    int calc_fL = 0;
+
     double M_Zprime = -1;
     double Ga_Zprime = 0;
     double M_Wprime = -1;
@@ -972,7 +1003,7 @@ double TEvtProb::XsecCalc_VX(
         HvvCLambda_qsq[j] = (selfDSpinZeroCoupl.HzzCLambda_qsq)[j];
       }
     }
-    SetJHUGenSpinZeroVVCouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, HvvCLambda_qsq, HvvLambda_qsq, false);
+    SetJHUGenSpinZeroVVCouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, HvvCLambda_qsq, HvvLambda_qsq, false, HvvPLcoupl, HvvfPerpcoupl, Hvv_as_coupl, calc_fL);
     SetJHUGenVprimeContactCouplings(Zpffcoupl, Wpffcoupl);
     SetZprimeMassWidth(M_Zprime, Ga_Zprime);
     SetWprimeMassWidth(M_Wprime, Ga_Wprime);

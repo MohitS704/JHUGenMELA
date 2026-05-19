@@ -391,8 +391,13 @@ void Mela::setSpinZeroCouplings(){
     selfDHvvLambda_ff,
     selfDHvvn_ff,
     selfDSMEFTSimcoupl,
-    differentiate_HWW_HZZ
+    selfDHvv_as_coupl,
+    selfHvvPLcoupl,
+    selfHvvfPerpcoupl,
+    differentiate_HWW_HZZ,
+    calc_fL
   );
+
   ZZME->set_SpinZeroContact(
     selfDHzzpcoupl,
     selfDHzpzpcoupl,
@@ -412,7 +417,7 @@ void Mela::setSpinOneCouplings(){
   ZZME->set_SpinOneCouplings(selfDZqqcoupl, selfDZvvcoupl);
 }
 void Mela::setSpinTwoCouplings(){
-  ZZME->set_SpinTwoCouplings(selfDGqqcoupl, selfDGggcoupl, selfDGvvcoupl);
+  ZZME->set_SpinTwoCouplings(selfDGqqcoupl, selfDGggcoupl, selfDGvvcoupl, calc_fAmp);
   ZZME->set_SpinTwoContact(selfDGvvpcoupl, selfDGvpvpcoupl);
   ZZME->set_VprimeContactCouplings(
     selfDZpffcoupl,
@@ -472,6 +477,9 @@ void Mela::reset_SelfDCouplings(){
     }
   }
   // Spin-0 contact terms
+  selfHvvPLcoupl = 0;
+  selfHvvfPerpcoupl = 0;
+  calc_fL = 0;
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_HVV; ic++){
       selfDHzzpcoupl[ic][im] = 0;
@@ -479,6 +487,11 @@ void Mela::reset_SelfDCouplings(){
       selfDHwwpcoupl[ic][im] = 0;
       selfDHwpwpcoupl[ic][im] = 0;
     }
+
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+      selfDHvv_as_coupl[ic][im] = 0;
+    }
+
   }
   // Spin-0 self coupling terms
   for (int ic=0; ic<SIZE_HHH; ic++){
@@ -496,6 +509,7 @@ void Mela::reset_SelfDCouplings(){
   }
 
   //****Spin-2****//
+  calc_fAmp = 0;
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_GVV; ic++){
       selfDGvvcoupl[ic][im] = 0;

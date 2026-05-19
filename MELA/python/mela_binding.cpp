@@ -1092,6 +1092,10 @@ PYBIND11_MODULE(Mela, m) {
         .def("computeVBFAngles_ComplexBoost", &computeVBFAngles_ComplexBoost)
         .def("computeVHAngles", &computeVHAngles)
 
+        .def_readwrite("fL", &Mela::selfHvvPLcoupl)
+        .def_readwrite("fPerp", &Mela::selfHvvfPerpcoupl)
+        .def_readwrite("calc_fL", &Mela::calc_fL)
+        .def_readwrite("calc_fAmp", &Mela::calc_fAmp)
         .def_readwrite("differentiate_HWW_HZZ", &Mela::differentiate_HWW_HZZ)
 
         //Raw coupling arrays
@@ -1147,6 +1151,8 @@ PYBIND11_MODULE(Mela, m) {
         MAKE_COUPLING_ARR_SPIN_ONETWO(selfDGvpvpcoupl,SIZE_GVV)
         MAKE_COUPLING_ARR_SPIN_ONETWO(selfDaTQGCcoupl,SIZE_ATQGC)
         MAKE_COUPLING_ARR_SPIN_ONETWO(selfDAZffcoupl,SIZE_AZff)
+        MAKE_COUPLING_ARR_SPIN_ONETWO(selfDHvv_as_coupl,SIZE_as_HVV)
+        
         .def("selfDSMEFTSimcoupl", [](py::object &obj){ \
             Mela &D = obj.cast<Mela&>(); \
             return py::array_t<double>(std::vector<double>{SIZE_SMEFT}, (const double*) &D.selfDSMEFTSimcoupl, obj); \
@@ -1887,6 +1893,10 @@ PYBIND11_MODULE(Mela, m) {
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, cranod, gAZff_dZRH)
 
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, clanod, gAZff_dZLH)
+
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDHvv_as_coupl, ahz1, as_HVV_1)
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDHvv_as_coupl, ahz2, as_HVV_2)
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDHvv_as_coupl, ahz3, as_HVV_3)
 
         MAKE_COUPLING_MADMELA(mdl_ch, gMDL_ch)
         MAKE_COUPLING_MADMELA(mdl_chbox, gMDL_chbox)

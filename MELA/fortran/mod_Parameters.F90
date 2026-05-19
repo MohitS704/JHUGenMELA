@@ -359,6 +359,9 @@ real(8), public, parameter :: Lambda2 = 1000d0    *GeV      ! for second resonan
 !--------------------!
 !-- parameters that define on-shell spin 0 coupling to SM fields, see note
    logical, public, parameter :: generate_as = .false. ! .true. uses ah* instead of gh*
+   integer, public :: calc_fL = 0 ! if it is 1 or 2, it will be activated
+   real(8), public :: fL = 0.61235725
+   real(8), public :: fPerp = 0
    complex(8), public, parameter :: ahg1 = (1.0d0,0d0)
    complex(8), public, parameter :: ahg2 = (0d0,0d0)
    complex(8), public, parameter :: ahg3 = (0d0,0d0)  ! pseudoscalar
@@ -927,6 +930,7 @@ real(8), public, parameter :: Lambda2 = 1000d0    *GeV      ! for second resonan
   complex(8), public :: a5 = (0d0,0d0)    ! pseudoscalar, g8
   complex(8), public :: graviton_qq_left  = (1.0d0,0d0)! graviton coupling to quarks
   complex(8), public :: graviton_qq_right = (1.0d0,0d0)
+  integer, public :: calc_fAmp  = (0d0)
 
 !-- see mod_Graviton for these two parameters
   logical, public, parameter :: generate_bis = .true.

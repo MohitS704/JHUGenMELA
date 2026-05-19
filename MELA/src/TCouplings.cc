@@ -16,6 +16,12 @@ SpinZeroCouplings::~SpinZeroCouplings(){}
 void SpinZeroCouplings::allow_WWZZSeparation(bool doAllow){ separateWWZZcouplings = doAllow; }
 void SpinZeroCouplings::reset(){
   allow_WWZZSeparation(false);
+  
+  /*Polarization study*/
+  HvvPLcoupl = 0;
+  HvvfPerpcoupl = 0;
+  calc_fL = 0;
+  /*Polarization study*/
 
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_HVV; ic++){
@@ -34,6 +40,13 @@ void SpinZeroCouplings::reset(){
       H2ggcoupl[ic][im]=0;
       H2g4g4coupl[ic][im]=0;
     }
+
+  /*use generate as to do calculation*/
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+      Hvv_as_coupl[ic][im]=0;
+    }
+  /*use generate as to do calculation*/
+
     for (int ic=0; ic<SIZE_HQQ; ic++){
       Hqqcoupl[ic][im]=0;
       Httcoupl[ic][im]=0;
@@ -76,6 +89,9 @@ void SpinZeroCouplings::copy(SpinZeroCouplings const& other){
   allow_WWZZSeparation(other.separateWWZZcouplings);
 
   for (int im=0; im<2; im++){
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+      Hvv_as_coupl[ic][im]=(other.Hvv_as_coupl)[ic][im];
+    }
     for (int ic=0; ic<SIZE_HVV; ic++){
       Hzzcoupl[ic][im] = (other.Hzzcoupl)[ic][im];
       Hwwcoupl[ic][im] = (other.Hwwcoupl)[ic][im];
@@ -141,6 +157,16 @@ void SpinZeroCouplings::SetHVVCouplings(unsigned int index, double c_real, doubl
     }
   }
 }
+
+void SpinZeroCouplings::SetHVV_Polarization_Couplings(unsigned int index, double c_real, double c_imag, double fL, double fPerp, int calc_pl){
+
+  HvvPLcoupl = fL;
+  HvvfPerpcoupl = fPerp;
+  Hvv_as_coupl[index][0] = c_real;
+  Hvv_as_coupl[index][1] = c_imag;
+  calc_fL = calc_pl;
+}
+
 void SpinZeroCouplings::SetHVVLambdaQ2(unsigned int gType, unsigned int index, double lambda, bool setWW, int whichResonance){
   if (!separateWWZZcouplings && setWW) return;
   if (index>=SIZE_HVV_CQSQ || gType>=SIZE_HVV_LAMBDAQSQ) MELAerr << "Cannot set index " << index <<  " for g" << (gType+1) << "_dyn, out of range." << endl;
@@ -371,6 +397,7 @@ void SpinTwoCouplings::reset(){
     for (int ic=0; ic<SIZE_GGG; ic++) Gggcoupl[ic][im] = 0;
     for (int ic=0; ic<SIZE_GQQ; ic++) Gqqcoupl[ic][im] = 0;
   }
+  calc_fAmp = 0;
   /*
   Gggcoupl[0][0]=1.0;
   Gqqcoupl[0][0]=1.0;
@@ -393,6 +420,15 @@ void SpinTwoCouplings::SetGVVCouplings(unsigned int index, double c_real, double
     Gvvcoupl[index][0] = c_real;
     Gvvcoupl[index][1] = c_imag;
   }
+}
+
+void SpinTwoCouplings::SetGVVCouplings_Polarization_Couplings(unsigned int index, double c_real, double c_imag, int calc_pl){
+  if (index>=SIZE_GVV) MELAerr << "Cannot set index " << index << " for the Gvvcoupl, out of range." << endl;
+  else{
+    Gvvcoupl[index][0] = c_real;
+    Gvvcoupl[index][1] = c_imag;
+  }
+  calc_fAmp = calc_pl;
 }
 void SpinTwoCouplings::SetGVVpCouplings(unsigned int index, double c_real, double c_imag){
   if (index>=SIZE_GVV) MELAerr << "Cannot set index " << index << " for the Gvvpcoupl, out of range." << endl;
