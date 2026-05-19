@@ -227,6 +227,24 @@
       complex(dp) :: ghz1_dyn,ghz2_dyn,ghz3_dyn,ghz4_dyn
       real(dp) :: q34
       real(dp) :: q_q, q3_q3, q4_q4
+      real(dp) :: X_paper
+      real(dp) :: yyy2_constant
+      real(dp) :: g1_constant
+      real(dp) :: epsilon
+      !real(dp) :: total_amp
+      real(dp) :: fL_SM
+      real(dp) :: fTr_SM
+      real(dp) :: exp_sqrt_fTr_SM
+      real(dp) :: yyy3_Constant
+      !real(dp) :: abs_fLP
+      real(dp) :: abs_yyy2
+      real(dp) :: abs_yyy3
+      real(dp) :: fL_prime
+      real(dp) :: eta
+      real(dp) :: tmp
+      real(dp) :: fL_constatnt
+      real(dp) :: fT_constant
+
 
 
       res = 0d0
@@ -321,7 +339,7 @@
          print *,"VVMode",VVMode,"not implemented"
       endif
 
-      if( .not. generate_as ) then
+      if ((calc_fL < 1) .and. (.not. generate_as) ) then
          xxx1 = ghg2+ghg3/4d0/Lambda**2*q_q
          xxx3 = -2d0*ghg4
          yyy1 = ghz1_dyn*M_V**2/q_q &  ! in this line M_V is indeed correct, not a misprint
@@ -329,6 +347,136 @@
               + ghz3_dyn/Lambda**2*(q_q-q3_q3-q4_q4)*(q_q-q4_q4-q3_q3)/4d0/q_q
          yyy2 = -2d0*ghz2_dyn-ghz3_dyn/2d0/Lambda**2*(q_q-q3_q3-q4_q4)
          yyy3 = -2d0*ghz4_dyn
+      elseif ((calc_fL .eq. 1) .and. (.not. generate_as)) then 
+         !fL_SM = 0.61235725497447170
+         if (VVMode.eq.ZZMode) then
+            fL_SM = 0.61235725879669189
+         else if (VVMode.eq.WWMode) then
+            fL_SM = 0.6016220637237072
+         else
+            print *, "It's unkown for other decay mode!!! Please simulate the sample and add it to the Generator!!! --Zhiyuan"
+            stop 1
+         endif
+
+         fTr_SM = 1 - fL_SM
+         exp_sqrt_fTr_SM = 0.5969446803955207
+
+         xxx1 = ahg1
+         xxx3 = ahg3
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         !=====Modify for HZZ entanglement=====!
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         yyy3_Constant =  sqrt(q3_q3*q4_q4*X_paper)/q_q
+
+         if (abs(fPerp) < 1) then
+            fL_prime = abs(fL) / (1 - abs(fPerp))
+            if (fL_prime > 1) then
+               fL_prime = 1
+            endif
+            abs_yyy3 = sqrt(abs(fPerp) / (2*(1 - abs(fPerp))) * (X_paper + 3)) 
+            
+            eta = sqrt(abs((1 - fL_prime) * (fL_prime/fTr_SM + 1)))
+
+            epsilon = (-2*(exp_sqrt_fTr_SM*eta -1) - sqrt(4*(exp_sqrt_fTr_SM*eta-1)**2 - 4*(fL_prime)*(fTr_SM*eta**2 - 2*exp_sqrt_fTr_SM*eta + 1)))/(2*(fTr_SM*eta**2-2*exp_sqrt_fTr_SM*eta + 1))
+
+            yyy1 = abs(epsilon*eta + (1 - epsilon)*sqrt((X_paper + 3) / 2)) 
+
+            tmp = abs((X_paper+3) - 2 * yyy1**2)
+            if (fL < 0) then
+                  yyy2 = (-sqrt(tmp) - yyy1 * sqrt(X_paper + 1))
+            else
+                  yyy2 = (sqrt(tmp) - yyy1 * sqrt(X_paper + 1))      
+            endif
+            yyy1 = yyy1 * sqrt(1 - abs(fPerp)) * g1_constant
+            yyy2 = yyy2 * sqrt(1 - abs(fPerp))  / yyy2_Constant * g1_constant
+            abs_yyy3 = abs_yyy3 * sqrt(1 - abs(fPerp)) / yyy3_Constant * g1_constant
+            
+         else
+            abs_yyy3 = sqrt(abs(fPerp) * (X_paper + 3) / 2) / yyy3_Constant * g1_constant
+            yyy1 = 0
+            yyy2 = 0
+         endif
+         
+         if (fPerp > 0) then
+            yyy3 = abs_yyy3
+         elseif (fPerp < 0) then
+            yyy3 = -abs_yyy3
+         else
+            yyy3 = 0
+         endif
+         !print *,epsilon, yyy1, yyy2, yyy3, fL_prime
+
+         !=====Modify for HZZ entanglement=====!
+         !=====back up code=====!
+         !Version 1
+         !abs_fLP = abs(fL) + abs(fPerp) !Longitudinal + Perpendicular
+         !yyy1 = sqrt((1 - abs_fLP) / fTr_SM)  * g1_constant
+         !if (fL < 0) then
+         !   yyy2 = (-sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+         !else
+         !   yyy2 = (sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+         !endif
+         !print *,  sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2 ), sqrt(total_amp * abs(fL))
+         !print *, yyy1, abs_yyy2, yyy3, 1./yyy2_Constant*g1_constant*sqrt(X_paper + 3)
+
+         !Version 2
+         !total_amp = (X_paper+3)*(1 + abs(fPerp))* g1_constant**2
+            
+            !if (fL_prime > fL_SM) then
+               !if (fL_prime > 1) then
+                  !print *, fL, fPerp, fL_prime
+               !   fL_prime = 1.
+                  !print *, fL_prime
+               !endif
+               !yyy1 = sqrt((1 - abs(fL_prime)) / (fTr_SM)) * g1_constant
+               !tmp = (X_paper+3)*g1_constant**2 - 2 * yyy1**2
+               !if (fL < 0) then
+               !     yyy2 = (-sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !else
+               !     yyy2 = (sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !endif
+
+            !else
+
+               !epsilon = (-2 * (exp_sqrt_fTr_SM - 1) - sqrt(4*(exp_sqrt_fTr_SM - 1)**2 - 4*(fL_prime)*(fTr_SM - 2*exp_sqrt_fTr_SM + 1))) &
+               !/ (2 * (fTr_SM - 2*exp_sqrt_fTr_SM + 1))
+               !print *, epsilon
+               !yyy1 =  (epsilon + (1 - epsilon)*sqrt((X_paper + 3) / 2)) * g1_constant
+               !tmp = (X_paper+3)*g1_constant**2 - 2 * yyy1**2
+               
+               !if (fL < 0) then 
+               !   yyy2 = (-sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !else
+               !   yyy2 = (sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !endif
+               
+            !print *, "epsilon", epsilon, sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2 ), sqrt(total_amp * abs(fL))
+         !=====back up code=====!
+      !==== Strategy 2 ====!
+      !==== Warning: This will change the mass distribution of Z mass ====!
+      elseif ((calc_fL .eq. 2) .and. (.not. generate_as)) then
+         xxx1 = ahg1
+         xxx3 = ahg3
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         if (fL .eq. 1) then
+            yyy1 = 0
+            yyy2 = fL / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         elseif (fL .eq. 0) then
+            yyy1 = g1_constant
+            yyy2 = -1 / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         endif
+      !==== Warning: This will change the mass distribution of Z mass ====!
+      !==== Strategy 2 ====!
+
       else
          xxx1 = ahg1
          xxx3 = ahg3

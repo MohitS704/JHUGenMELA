@@ -16,6 +16,7 @@ public:
   SpinZeroCouplings* getRef();
 
   void SetHVVCouplings(unsigned int index, double c_real, double c_imag, bool setWW = false, int whichResonance=1);
+  void SetHVV_Polarization_Couplings(unsigned int index, double c_real, double c_imag, double fL, double fPerp, int calc_pl);
   void SetHVVLambdaQ2(unsigned int gType, unsigned int index, double lambda, bool setWW = false, int whichResonance=1);
   void SetHVVSignCQ2(unsigned int index, int csign, bool setWW = false, int whichResonance=1);
   void SetHVVLambdaFF(unsigned int index, double c_real, int whichResonance=1);
@@ -38,6 +39,12 @@ public:
 
   double Hzzcoupl[SIZE_HVV][2];
   double Hwwcoupl[SIZE_HVV][2];
+  /*=== polarization study===*/
+  double Hvv_as_coupl[SIZE_as_HVV][2];
+  double HvvPLcoupl;
+  double HvvfPerpcoupl;
+  int calc_fL;
+  /*=== polarization study===*/
   double HzzLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ];
   double HwwLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ];
   int HzzCLambda_qsq[SIZE_HVV_CQSQ];
@@ -103,6 +110,7 @@ public:
   SpinTwoCouplings* getRef();
 
   void SetGVVCouplings(unsigned int index, double c_real, double c_imag);
+  void SetGVVCouplings_Polarization_Couplings(unsigned int index, double c_real, double c_imag, int calc_pl);
   void SetGVVpCouplings(unsigned int index, double c_real, double c_imag);
   void SetGVpVpCouplings(unsigned int index, double c_real, double c_imag);
   void SetGQQCouplings(unsigned int index, double c_real, double c_imag);
@@ -113,6 +121,9 @@ public:
   double Gvpvpcoupl[SIZE_GVV][2];
   double Gqqcoupl[SIZE_GQQ][2];
   double Gggcoupl[SIZE_GGG][2];
+  /*=== polarization study===*/
+  int calc_fAmp;
+  /*=== polarization study===*/
 };
 
 class VprimeCouplings{

@@ -4253,18 +4253,22 @@ void TUtil::SetMCFMAZffCouplings(bool useBSM, AZffCouplings const* Zcouplings){
     anomzffcouplings_.cranod = 0;
   }
 }
-void TUtil::SetJHUGenSpinZeroVVCouplings(double Hvvcoupl[SIZE_HVV][2], double Hvvpcoupl[SIZE_HVV][2], double Hvpvpcoupl[SIZE_HVV][2], int Hvvcoupl_cqsq[SIZE_HVV_CQSQ], double HvvLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ], bool useWWcoupl){
+
+void TUtil::SetJHUGenSpinZeroVVCouplings(double Hvvcoupl[SIZE_HVV][2], double Hvvpcoupl[SIZE_HVV][2], double Hvpvpcoupl[SIZE_HVV][2], int Hvvcoupl_cqsq[SIZE_HVV_CQSQ], double HvvLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ], bool useWWcoupl, double HvvPLcoupl, double HvvfPerpcoupl, double Hvv_as_coupl[SIZE_as_HVV][2], int calc_fL){
+
   const double GeV = 1./100.;
   int iWWcoupl = (useWWcoupl ? 1 : 0);
   for (int c=0; c<SIZE_HVV_LAMBDAQSQ; c++){ for (int k=0; k<SIZE_HVV_CQSQ; k++) HvvLambda_qsq[c][k] *= GeV; } // GeV units in JHUGen
-  __modjhugenmela_MOD_setspinzerovvcouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, Hvvcoupl_cqsq, HvvLambda_qsq, &iWWcoupl);
+
+  __modjhugenmela_MOD_setspinzerovvcouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, Hvvcoupl_cqsq, HvvLambda_qsq, &iWWcoupl, &HvvPLcoupl, &HvvfPerpcoupl, Hvv_as_coupl, &calc_fL);
 }
 void TUtil::SetJHUGenSpinZeroGGCouplings(double Hggcoupl[SIZE_HGG][2]){ __modjhugenmela_MOD_setspinzeroggcouplings(Hggcoupl); }
 void TUtil::SetJHUGenSpinZeroQQCouplings(double Hqqcoupl[SIZE_HQQ][2]){ __modjhugenmela_MOD_setspinzeroqqcouplings(Hqqcoupl); }
 void TUtil::SetJHUGenSpinOneCouplings(double Zqqcoupl[SIZE_ZQQ][2], double Zvvcoupl[SIZE_ZVV][2]){ __modjhugenmela_MOD_setspinonecouplings(Zqqcoupl, Zvvcoupl); }
-void TUtil::SetJHUGenSpinTwoCouplings(double Gacoupl[SIZE_GGG][2], double Gvvcoupl[SIZE_GVV][2], double Gvvpcoupl[SIZE_GVV][2], double Gvpvpcoupl[SIZE_GVV][2], double qLeftRightcoupl[SIZE_GQQ][2]){
-  __modjhugenmela_MOD_setspintwocouplings(Gacoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, qLeftRightcoupl);
+void TUtil::SetJHUGenSpinTwoCouplings(double Gacoupl[SIZE_GGG][2], double Gvvcoupl[SIZE_GVV][2], double Gvvpcoupl[SIZE_GVV][2], double Gvpvpcoupl[SIZE_GVV][2], double qLeftRightcoupl[SIZE_GQQ][2], int calc_fAmp){
+  __modjhugenmela_MOD_setspintwocouplings(Gacoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, qLeftRightcoupl, &calc_fAmp);
 }
+
 void TUtil::SetJHUGenVprimeContactCouplings(double Zpffcoupl[SIZE_Vpff][2], double Wpffcoupl[SIZE_Vpff][2]){
   __modjhugenmela_MOD_setvprimecontactcouplings(Zpffcoupl, Wpffcoupl);
 }

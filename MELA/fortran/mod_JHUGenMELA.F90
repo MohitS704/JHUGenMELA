@@ -120,7 +120,7 @@ implicit none
    includeGammaStar=.false.
 end subroutine
 
-subroutine SetSpinZeroVVCouplings(vvcoupl, vvpcoupl, vpvpcoupl, cqsq, Lambda_qsq, useWWcoupl)
+subroutine SetSpinZeroVVCouplings(vvcoupl, vvpcoupl, vpvpcoupl, cqsq, Lambda_qsq, useWWcoupl, plcoupl,perpcoupl, vvcoupl_as, calc_pl)
    implicit none
    complex(8), intent(in) :: vvcoupl(39)
    complex(8), intent(in) :: vvpcoupl(39)
@@ -128,6 +128,14 @@ subroutine SetSpinZeroVVCouplings(vvcoupl, vvpcoupl, vpvpcoupl, cqsq, Lambda_qsq
    integer, intent(in) :: cqsq(3)
    real(8), intent(in) :: Lambda_qsq(1:3,1:4)
    logical, intent(in) :: useWWcoupl
+   real(8), intent(in) :: plcoupl
+   real(8), intent(in) :: perpcoupl
+   complex(8), intent(in) :: vvcoupl_as(3)
+   integer, intent(in) :: calc_pl
+
+   fL = plcoupl
+   fPerp = perpcoupl
+   calc_fL = calc_pl
 
    includeVprime = includeVprime .or. (                                   &
                     (any(vvpcoupl.ne.czero) .or. any(vpvpcoupl.ne.czero)) &
@@ -506,14 +514,17 @@ subroutine SetSpinOneCouplings(qqcoupl,vvcoupl)
    return
 end subroutine SetSpinOneCouplings
 
-subroutine SetSpinTwoCouplings(acoupl,vvcoupl,vvpcoupl,vpvpcoupl,qLR)
+subroutine SetSpinTwoCouplings(acoupl,vvcoupl,vvpcoupl,vpvpcoupl,qLR, calc_pl)
    implicit none
    integer, parameter :: indexGammaBegin=11
    integer, parameter :: indexVVSize=20
    complex(8), intent(in) :: acoupl(1:5)
    complex(8), intent(in) :: vvcoupl(1:indexVVSize),vvpcoupl(1:indexVVSize),vpvpcoupl(1:indexVVSize)
    complex(8), intent(in) :: qLR(1:2)
+   integer, intent(in) :: calc_pl
 
+   calc_fAmp = calc_pl
+   
    includeVprime = (any(vvpcoupl.ne.czero) .or. any(vpvpcoupl.ne.czero))
    includeGammaStar = (                                                       &
                     any(vvcoupl(indexGammaBegin:indexVVSize).ne.czero) .or.   &

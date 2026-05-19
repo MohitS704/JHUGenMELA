@@ -257,9 +257,17 @@ void ZZMatrixElement::set_SpinZeroCouplings(
   double selfDHvvLambda_ff[nSupportedHiggses][SIZE_HVV_LAMBDAFF],
   int selfDHvvn_ff[nSupportedHiggses][SIZE_HVV_NFF],
   double selfDSMEFTSimcoupl[SIZE_SMEFT],
-  bool diffHWW
+  double selfDHvv_as_coupl[SIZE_as_HVV][2],
+  double selfHvvPLcoupl,
+  double selfHvvfPerpcoupl,
+  bool diffHWW,
+  int calc_fL
   ){
   Xcal2.AllowSeparateWWCouplings(diffHWW);
+  /*polarization study*/
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+    selfD_SpinZeroCouplings->SetHVV_Polarization_Couplings(ic, selfDHvv_as_coupl[ic][0], selfDHvv_as_coupl[ic][1], selfHvvPLcoupl, selfHvvfPerpcoupl, calc_fL);}
+  /*polarization study*/
   for (int jh=1; jh<=(int)nSupportedHiggses; jh++){
     for (int ic=0; ic<SIZE_HGG; ic++) selfD_SpinZeroCouplings->SetHGGCouplings(ic, selfDHggcoupl[jh-1][ic][0], selfDHggcoupl[jh-1][ic][1], 1, jh);
     for (int ic=0; ic<SIZE_HGG; ic++) selfD_SpinZeroCouplings->SetHGGCouplings(ic, selfDHg4g4coupl[jh-1][ic][0], selfDHg4g4coupl[jh-1][ic][1], 2, jh);
@@ -270,7 +278,7 @@ void ZZMatrixElement::set_SpinZeroCouplings(
     for (int ic=0; ic<SIZE_HQQ; ic++) selfD_SpinZeroCouplings->SetHQQCouplings(ic, selfDHb4b4coupl[jh-1][ic][0], selfDHb4b4coupl[jh-1][ic][1], 7, jh);
     for (int ic=0; ic<SIZE_HQQ; ic++) selfD_SpinZeroCouplings->SetHQQCouplings(ic, selfDHt4t4coupl[jh-1][ic][0], selfDHt4t4coupl[jh-1][ic][1], 8, jh);
 
-    for (int ic=0; ic<SIZE_HVV; ic++) selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHzzcoupl[jh-1][ic][0], selfDHzzcoupl[jh-1][ic][1], false, jh);
+    for (int ic=0; ic<SIZE_HVV; ic++) {selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHzzcoupl[jh-1][ic][0], selfDHzzcoupl[jh-1][ic][1], false, jh);}
     for (int ic=0; ic<SIZE_HVV; ic++) selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHwwcoupl[jh-1][ic][0], selfDHwwcoupl[jh-1][ic][1], true, jh);
     for (int ik=0; ik<SIZE_HVV_CQSQ; ik++){
       for (int ig=0; ig<SIZE_HVV_LAMBDAQSQ; ig++){
@@ -312,11 +320,13 @@ void ZZMatrixElement::set_SpinOneCouplings(
 void ZZMatrixElement::set_SpinTwoCouplings(
   double selfDGqqcoupl[SIZE_GQQ][2],
   double selfDGggcoupl[SIZE_GGG][2],
-  double selfDGvvcoupl[SIZE_GVV][2]
+  double selfDGvvcoupl[SIZE_GVV][2],
+  int calc_fAmp
   ){
   for (int ic=0; ic<SIZE_GQQ; ic++) selfD_SpinTwoCouplings->SetGQQCouplings(ic, selfDGqqcoupl[ic][0], selfDGqqcoupl[ic][1]);
   for (int ic=0; ic<SIZE_GGG; ic++) selfD_SpinTwoCouplings->SetGGGCouplings(ic, selfDGggcoupl[ic][0], selfDGggcoupl[ic][1]);
-  for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1]);
+  //for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1]);
+  for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings_Polarization_Couplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1], calc_fAmp);
 }
 void ZZMatrixElement::set_SpinTwoContact(
   double selfDGvvpcoupl[SIZE_GVV][2],
