@@ -253,6 +253,8 @@ namespace{
     gAZff_uZLH,
     gAZff_dZRH,
     gAZff_dZLH,
+    gAZff_tZRH,
+    gAZff_tZLH,
 
     SIZE_AZff
   };
