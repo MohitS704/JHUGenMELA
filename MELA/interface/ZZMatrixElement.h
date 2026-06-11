@@ -105,7 +105,8 @@ public:
     double selfHvvPLcoupl,
     double selfHvvfPerpcoupl,
     bool diffHWW = false,
-    int calc_fL = 0
+    int calc_fL = 0,
+    bool sethMassWidth = false
     );
   void set_SpinZeroContact(
     double selfDHzzpcoupl[SIZE_HVV][2],
@@ -167,6 +168,7 @@ protected:
   double EBEAM;
   double mHiggs[nSupportedHiggses];
   double wHiggs[nSupportedHiggses];
+  bool setHMassWidth=false;
   TEvtProb Xcal2;
 
   SpinZeroCouplings* selfD_SpinZeroCouplings;

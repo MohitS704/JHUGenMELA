@@ -1068,6 +1068,7 @@ public:
   
   //polarization study
   int calc_fL;
+  bool sethMassWidth=false;
   double selfHvvPLcoupl;
   double selfHvvfPerpcoupl;
   //polarization study

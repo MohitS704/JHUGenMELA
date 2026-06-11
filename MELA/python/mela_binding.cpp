@@ -1096,6 +1096,7 @@ PYBIND11_MODULE(Mela, m) {
         .def_readwrite("fPerp", &Mela::selfHvvfPerpcoupl)
         .def_readwrite("calc_fL", &Mela::calc_fL)
         .def_readwrite("calc_fAmp", &Mela::calc_fAmp)
+        .def_readwrite("setHMassWidth", &Mela::sethMassWidth)
         .def_readwrite("differentiate_HWW_HZZ", &Mela::differentiate_HWW_HZZ)
 
         //Raw coupling arrays
@@ -2085,11 +2086,13 @@ PYBIND11_MODULE(Mela, m) {
         .value("SelfDefine_spin0",TVar::SelfDefine_spin0)
         .value("SelfDefine_spin1",TVar::SelfDefine_spin1)
         .value("SelfDefine_spin2",TVar::SelfDefine_spin2)
+        .value("SelfDefine_phase_space",TVar::SelfDefine_phase_space)
         .value("nProcesses",TVar::nProcesses);
 
     py::enum_<TVar::ResonancePropagatorScheme>(m, "ResonancePropagatorScheme")
         .value("NoPropagator", TVar::NoPropagator)
         .value("RunningWidth", TVar::RunningWidth)
+        .value("RunningWidth_Reweight", TVar::RunningWidth_Reweight)
         .value("FixedWidth", TVar::FixedWidth)
         .value("CPS", TVar::CPS)
         .value("AltRunningWidth", TVar::AltRunningWidth);

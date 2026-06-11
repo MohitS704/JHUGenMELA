@@ -208,6 +208,13 @@ void ZZMatrixElement::reset_MCFM_EWKParameters(double ext_Gf, double ext_aemmz, 
 // resetPerEvent resets the mass, width and lepton interference settings and deletes the temporary input objects ZZMatrixElement owns.
 void ZZMatrixElement::resetPerEvent(){
   // Protection against forgetfulness; custom width has to be set per-computation
+
+  if (setHMassWidth){
+      for (int i = 0; i < 2; i++){
+        Xcal2.SetHiggsMass(mHiggs[i], wHiggs[i], i+1);
+      }
+  }
+  else{
   set_mHiggs(Xcal2.GetPrimaryHiggsMass(), 0); // Sets mHiggs[0]
   if (wHiggs[0]>=0.) set_wHiggs(-1., 0);
 
@@ -215,6 +222,8 @@ void ZZMatrixElement::resetPerEvent(){
   if (wHiggs[1]>=0.) set_wHiggs(-1., 1);
 
   Xcal2.SetHiggsMass(mHiggs[0], -1, -1);
+
+  }
 
   // Return back to default lepton interference settings after each calculation
   if (processLeptonInterference != TVar::DefaultLeptonInterf) set_LeptonInterference(TVar::DefaultLeptonInterf);
@@ -261,8 +270,10 @@ void ZZMatrixElement::set_SpinZeroCouplings(
   double selfHvvPLcoupl,
   double selfHvvfPerpcoupl,
   bool diffHWW,
-  int calc_fL
+  int calc_fL,
+  bool sethMassWidth
   ){
+  setHMassWidth = sethMassWidth;
   Xcal2.AllowSeparateWWCouplings(diffHWW);
   /*polarization study*/
     for (int ic=0; ic<SIZE_as_HVV; ic++){
@@ -376,6 +387,11 @@ void ZZMatrixElement::computeXS(
     if (processME == TVar::MCFM){
       for (int jh=0; jh<(int)nSupportedHiggses; jh++) Xcal2.SetHiggsMass(mHiggs[jh], wHiggs[jh], jh+1);
     }
+    
+    else if (setHMassWidth){
+      //for (int jh=0; jh<2; jh++) Xcal2.SetHiggsMass(zzmass, wHiggs[jh], jh+1);
+      for (int jh=0; jh<2; jh++) Xcal2.SetHiggsMass(mHiggs[jh], wHiggs[jh], jh+1);
+    }
     else Xcal2.SetHiggsMass(zzmass, wHiggs[0], -1);
 
     mevalue = Xcal2.XsecCalc_XVV();
@@ -486,7 +502,12 @@ void ZZMatrixElement::get_XPropagator(TVar::ResonancePropagatorScheme scheme, fl
   melaCand = get_CurrentCandidate();
 
   if (melaCand){
-    Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], -1);
+    if (setHMassWidth) {
+      Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], 0);
+    }
+    else {
+      Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], -1);
+    }
     prop=Xcal2.GetXPropagator(scheme);
   }
 
