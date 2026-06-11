@@ -4947,6 +4947,9 @@ double TUtil::JHUGenMatEl(
     || process == TVar::H0_Zgsg1prime2
     || process == TVar::SelfDefine_spin0
     );
+  bool isSpinPhase = (
+    process == TVar::SelfDefine_phase_space
+  );
   bool isSpinOne = (
     process == TVar::H1minus
     || process == TVar::H1plus
@@ -4966,12 +4969,13 @@ double TUtil::JHUGenMatEl(
     || process == TVar::H2_g10
     || process == TVar::SelfDefine_spin2
     );
-  if (!(isSpinZero || isSpinOne || isSpinTwo)){ if (verbosity>=TVar::ERROR) MELAerr << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " (" << process << ")" << " not supported." << endl; return MatElSq; }
+  if (!(isSpinZero || isSpinOne || isSpinTwo || isSpinPhase)){ if (verbosity>=TVar::ERROR) MELAerr << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " (" << process << ")" << " not supported." << endl; return MatElSq; }
   if (verbosity>=TVar::DEBUG){
     MELAout << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " is computing a spin-";
     if (isSpinZero) MELAout << "0";
     else if (isSpinOne) MELAout << "1";
     else if (isSpinTwo) MELAout << "2";
+    else if (isSpinPhase) MELAout << "10";
     else MELAout << "?";
     MELAout << " ME with production " << TVar::ProductionName(production) << "." << endl;
   }
@@ -5217,6 +5221,7 @@ double TUtil::JHUGenMatEl(
       double MatElTmp=0.;
       if (production == TVar::ZZGG){
         if (isSpinZero) __modhiggs_MOD_evalamp_gg_h_vv(p4, MYIDUP, &MatElTmp);
+        else if (isSpinPhase) __modhiggs_MOD_evalamp_gg_h_vv_phase(p4, MYIDUP, &MatElTmp);
         else if (isSpinTwo) __modgraviton_MOD_evalamp_gg_g_vv(p4, MYIDUP, &MatElTmp);
       }
       else if (production == TVar::ZZQQB){

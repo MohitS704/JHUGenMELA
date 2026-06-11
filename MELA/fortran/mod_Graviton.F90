@@ -1566,6 +1566,10 @@
       complex(dp) :: yyy1,yyy2,yyy3,yyy41,yyy42,yyy5,yyy6,yyy7
       complex(dp) :: b_dyn(1:10)
       real(dp) :: q34,MG,MZ3,MZ4
+      real(dp) :: X_paper, c1_0p_const, yyy42_0p_const, c1_p0_const, yyy41_p0_const
+      real(dp) :: yyy1_00_const, yyy41_00_const, yyy42_00_const, yyy3_00_const 
+      real(dp) :: yyy1_pp_const, yyy2_pp_const, yyy2_00_const, beta_paper, yyy1_const
+      real(dp) :: pm_const, yyy1_prime, yyy7_const
       real(dp) :: rr
       real(dp),parameter :: sqrt6=dsqrt(6d0)
 
@@ -1722,6 +1726,155 @@
           yyy5 = two*b_dyn(8)*rr*MG**2/q34
           yyy6 = b_dyn(9) * M_V**2/Lambda**2
           yyy7 = b_dyn(10) * MG**2 * M_V**2/Lambda**4
+          
+          if (calc_fAmp .eq. 2) then
+            X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+            !==== spin2P A+- = A-+===!
+            yyy1 = 0d0
+            yyy2 = 0d0
+            yyy3 = 0d0
+            yyy41 = 0d0
+            yyy42 = 0d0
+            yyy5 = 0d0
+            yyy6 = 0d0
+            yyy7 = 0d0
+            yyy1_prime = 0
+
+            pm_const = q_q / 4 + q3_q3*q4_q4/q_q*X_paper - (q3_q3 - q4_q4)**2 / 4 /q_q 
+            yyy1 = 1 / pm_const * sqrt((X_paper + 3) / 2) / sqrt((one+MZ3**3/sqrt(abs(q34))**3)*(one+MZ4**3/sqrt(abs(q34))**3))
+            !/ sqrt((one+MZ3**5/sqrt(q34)**5)*(one+MZ4**2 * sqrt(MZ4)/q34 / sqrt(sqrt(q34))))
+            yyy1_prime = yyy1 / (q34 / 2 ) 
+            
+            c1_p0_const = sqrt(q_q)**3 / 8 / sqrt(2 * q4_q4) + &
+            sqrt(q_q * q4_q4 / 2) * (1 - q3_q3 / q4_q4) / 8 + &
+            q3_q3 * sqrt(q4_q4 / q_q / 2) * &
+            (1/4 + X_paper / 2 - q4_q4 / q3_q3 /8 - q3_q3 / q4_q4 /8) + &
+            q3_q3 * sqrt(q4_q4 / q_q)**3 / sqrt(2.0) * &
+            (((q3_q3/q4_q4)**2 - q4_q4 / q3_q3)/8 + &
+            (1 - q3_q3 / q4_q4) * (3/8 + X_paper/2))
+
+            yyy41_p0_const = sqrt(2 * q4_q4 / q_q) * X_paper * q3_q3
+            yyy41 = - c1_p0_const * yyy1_prime / yyy41_p0_const 
+            
+            c1_0p_const = sqrt(q_q)**3 / 8 / sqrt(2 * q3_q3) + &
+            sqrt(q_q * q3_q3 / 2) * (1 - q4_q4 / q3_q3) / 8 + &
+            q4_q4 * sqrt(q3_q3 / q_q / 2) * &
+            (1/4 + X_paper / 2 - q4_q4 / q3_q3 /8 - q3_q3 / q4_q4 /8) + &
+            q4_q4 * sqrt(q3_q3 / q_q)**3 / sqrt(2.0) * &  
+            (((q4_q4/q3_q3)**2 - q3_q3 / q4_q4)/8 + (1 - q4_q4 / q3_q3) * (3/8 + X_paper/2))
+
+            yyy42_0p_const = sqrt(2 * q3_q3 / q_q) * X_paper * q4_q4
+            yyy42 = - c1_0p_const * yyy1_prime / yyy42_0p_const
+
+            yyy1_pp_const = q_q / 4 / sqrt(6.0) - (q3_q3**2 + q4_q4**2) / q_q / 4 / sqrt(6.0) &
+            + q3_q3 * q4_q4 / sqrt(6.0) / q_q * (1/2 + X_paper)
+            
+            yyy2_pp_const = q3_q3 * q4_q4 / q_q * X_paper * 8 / sqrt(6.0)
+
+            yyy2 =  -yyy1_pp_const * yyy1_prime / yyy2_pp_const
+
+            yyy1_00_const = q_q**2 / sqrt(q3_q3 * q4_q4 * 6) / 8 + &
+            sqrt(q3_q3 * q4_q4 / 6) * (X_paper + 1) / 2 - &
+            (q3_q3**2 + q4_q4**2) / sqrt(q3_q3 * q4_q4 * 6) / 4 + &
+            (q3_q3**4 + q4_q4**4) / (q_q**2 * sqrt(q3_q3 * q4_q4 * 6) * 8) + &
+            sqrt(q3_q3 * q4_q4)**3 / q_q**2 / sqrt(6.0) * (3/4 + X_paper) - &
+            (X_paper + 1) / 2 * sqrt(q3_q3 * q4_q4 / 6) * (q3_q3**2 + q4_q4**2) / q_q**2
+
+            
+            yyy2_00_const = -1 * sqrt(q3_q3 * q4_q4 / 6) * 2 * X_paper - &
+            sqrt(q3_q3 * q4_q4)**3 / q_q**2 / sqrt(6.0) * (4 * X_paper + 8 * X_paper**2) &
+            + sqrt(q3_q3*q4_q4/6) * (q3_q3**2 + q4_q4**2) / q_q**2 * 2 * X_paper
+
+            yyy41_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 + (q3_q3 - q4_q4) / q_q) 
+
+            yyy42_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 - (q3_q3 - q4_q4) / q_q) 
+
+            yyy3_00_const = -sqrt(q3_q3 * q4_q4)**3 / q_q**2 / sqrt(6.0) * 8 * X_paper**2 
+            yyy3 = -(yyy1_00_const * yyy1_prime + yyy41_00_const * yyy41  &
+            + yyy42_00_const *yyy42 + yyy2_00_const * yyy2 ) / yyy3_00_const / q_q
+            !==== spin2P A+- = A-+===!
+          elseif (calc_fAmp .eq. 1) then 
+            X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+            !==== spin1P ===!
+            yyy1 = 0d0
+            yyy2 = 0d0
+            yyy3 = 0d0
+            yyy41 = 0d0
+            yyy42 = 0d0
+            yyy5 = 0d0
+            yyy6 = 0d0
+            yyy7 = 0d0
+            yyy1_prime = 0d0
+
+            yyy41_p0_const = sqrt(q4_q4 * q3_q3 / q_q) &
+            * X_paper * sqrt(q3_q3 + q4_q4)
+            yyy41 =  sqrt(X_paper + 3) / 2 / yyy41_p0_const 
+                     
+            yyy42 = yyy41 
+            
+            yyy41_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 + (q3_q3 - q4_q4) / q_q) 
+            yyy42_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 - (q3_q3 - q4_q4) / q_q) 
+
+            yyy3_00_const = -sqrt(q3_q3 * q4_q4)**3 / q_q**2 / sqrt(6.0) * 8 * X_paper**2 
+            yyy3 = -(yyy1_00_const * yyy1_prime + yyy41_00_const * yyy41  &
+            + yyy42_00_const *yyy42 + yyy2_00_const * yyy2 ) / yyy3_00_const / q_q
+            !==== spin1P ===!
+          elseif (calc_fAmp .eq. -1) then 
+            X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+            !==== spin1M ===!
+            yyy1 = 0d0
+            yyy2 = 0d0
+            yyy3 = 0d0
+            yyy41 = 0d0
+            yyy42 = 0d0
+            yyy5 = 0d0
+            yyy6 = 0d0
+            yyy7 = 0d0
+            yyy1_prime = 0d0
+            yyy7_const = q3_q3 * q4_q4 / sqrt(q_q) **3 * 4 &
+            * sqrt(X_paper) **3  / sqrt(2d0)
+            yyy7 = sqrt(X_paper + 3) / 2 / sqrt((q3_q3 + q4_q4)*2) &
+            / yyy7_const
+            !==== spin1M ===!
+          elseif (calc_fAmp .eq. -11) then 
+            X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+            !==== spin1 interference ===!
+            yyy1 = 0d0
+            yyy2 = 0d0
+            yyy3 = 0d0
+            yyy41 = 0d0
+            yyy42 = 0d0
+            yyy5 = 0d0
+            yyy6 = 0d0
+            yyy7 = 0d0
+            yyy1_prime = 0d0
+
+            yyy41_p0_const = sqrt(q4_q4 * q3_q3 / q_q) &
+            * X_paper * sqrt(q3_q3 + q4_q4)
+            yyy41 =  sqrt(X_paper + 3) / 2 / yyy41_p0_const 
+            
+            yyy42 = yyy41 
+            
+
+            yyy41_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 + (q3_q3 - q4_q4) / q_q) 
+            yyy42_00_const = 2 * X_paper *sqrt(q3_q3 * q4_q4 / 6) * &
+            (1 - (q3_q3 - q4_q4) / q_q) 
+
+            yyy3_00_const = -sqrt(q3_q3 * q4_q4)**3 / q_q**2 / sqrt(6.0) * 8 * X_paper**2 
+            yyy3 = -(yyy1_00_const * yyy1_prime + yyy41_00_const * yyy41  &
+            + yyy42_00_const *yyy42 + yyy2_00_const * yyy2 ) / yyy3_00_const / q_q
+
+            yyy7_const = q3_q3 * q4_q4 / sqrt(q_q) **3 * 4 &
+            * sqrt(X_paper) **3  / sqrt(2d0)
+            yyy7 = sqrt(X_paper + 3) / 2 / sqrt((q3_q3 + q4_q4)*2) &
+            / yyy7_const !* sqrt(1649846.1873620003 / 425831.70438384911)
+            !==== spin1 interference ===!
+          endif
 
       else
           yyy1 = q34*c1/2d0

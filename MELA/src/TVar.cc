@@ -57,6 +57,7 @@ TString TVar::ProcessName(TVar::Process temp){
   else if (temp==TVar::SelfDefine_spin0) return TString("SelfDefine_spin0");
   else if (temp==TVar::SelfDefine_spin1) return TString("SelfDefine_spin1");
   else if (temp==TVar::SelfDefine_spin2) return TString("SelfDefine_spin2");
+  else if (temp==TVar::SelfDefine_phase_space) return TString("SelfDefine_phase_space");
 
   else return TString("Unknown");
 }

@@ -550,7 +550,7 @@ double TEvtProb::XsecCalc_XVV(){
       Hvvcoupl[gHIGGS_AA_4][0] = 1.;
       isSpinZero = true;
     }
-    else if (process == TVar::SelfDefine_spin0){
+    else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
       calc_fL = selfDSpinZeroCoupl.calc_fL;
       HvvPLcoupl = selfDSpinZeroCoupl.HvvPLcoupl;
       HvvfPerpcoupl = selfDSpinZeroCoupl.HvvfPerpcoupl;
@@ -691,7 +691,7 @@ double TEvtProb::XsecCalc_XVV(){
     }
 
     // Vprime / contact couplings
-    if (process == TVar::SelfDefine_spin0 || process == TVar::SelfDefine_spin2){
+    if (process == TVar::SelfDefine_spin0 || process == TVar::SelfDefine_spin2 || process == TVar::SelfDefine_phase_space){
       for (int j=0; j<2; j++){
         for (int i=0; i<SIZE_Vpff; i++){
           Zpffcoupl[i][j] = (selfDVprimeCoupl.Zpffcoupl)[i][j];
@@ -731,7 +731,6 @@ double TEvtProb::XsecCalc_XVV(){
       SetZprimeMassWidth(M_Zprime, Ga_Zprime);
       SetWprimeMassWidth(M_Wprime, Ga_Wprime);
     }
-
     if (isSpinZero || isSpinOne || isSpinTwo) dXsec = JHUGenMatEl(process, production, matrixElement, &event_scales, &RcdME, EBEAM, verbosity);
     else if (verbosity>=TVar::ERROR) MELAerr
       << "TEvtProb::XsecCalc_XVV: JHUGen ME is not spin zero, one or two! The process is described by "
@@ -826,7 +825,7 @@ double TEvtProb::XsecCalcXJJ(){
       double Hggcoupl[SIZE_HGG][2] ={ { 0 } };
       if (process == TVar::HSMHiggs) Hggcoupl[gHIGGS_GG_2][0] = 1.;
       else if (process == TVar::H0minus) Hggcoupl[gHIGGS_GG_4][0] = 1.;
-      else if (process == TVar::SelfDefine_spin0){
+      else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
         for (int j=0; j<2; j++){
           for (int i=0; i<SIZE_HGG; i++) Hggcoupl[i][j] = (selfDSpinZeroCoupl.Hggcoupl)[i][j];
         }
@@ -867,7 +866,7 @@ double TEvtProb::XsecCalcXJJ(){
       else if (process == TVar::H0_Zgs_PS){ Hzzcoupl[gHIGGS_ZA_4][0] = 1.; }
       else if (process == TVar::H0_gsgs){ Hzzcoupl[gHIGGS_AA_2][0] = 1.; }
       else if (process == TVar::H0_gsgs_PS){ Hzzcoupl[gHIGGS_AA_4][0] = 1.; }
-      else if (process == TVar::SelfDefine_spin0){
+      else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
         for (int j=0; j<2; j++){
           for (int i=0; i<SIZE_HVV; i++){
             Hzzcoupl[i][j] = (selfDSpinZeroCoupl.Hzzcoupl)[i][j]; Hwwcoupl[i][j] = (selfDSpinZeroCoupl.Hwwcoupl)[i][j];
@@ -919,7 +918,7 @@ double TEvtProb::XsecCalcXJ(){
     double Hggcoupl[SIZE_HGG][2] ={ { 0 } };
     if (process == TVar::HSMHiggs) Hggcoupl[gHIGGS_GG_2][0] = 1.;
     else if (process == TVar::H0minus) Hggcoupl[gHIGGS_GG_4][0] = 1.;
-    else if (process == TVar::SelfDefine_spin0){
+    else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
       for (int j=0; j<2; j++){
         for (int i=0; i<SIZE_HGG; i++) Hggcoupl[i][j] = (selfDSpinZeroCoupl.Hggcoupl)[i][j];
       }
@@ -979,7 +978,7 @@ double TEvtProb::XsecCalc_VX(
     else if (process == TVar::H0_Zgs_PS) Hvvcoupl[gHIGGS_ZA_4][0] = 1.;
     else if (process == TVar::H0_gsgs) Hvvcoupl[gHIGGS_AA_2][0] = 1.;
     else if (process == TVar::H0_gsgs_PS) Hvvcoupl[gHIGGS_AA_4][0] = 1.;
-    else if (process == TVar::SelfDefine_spin0){
+    else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
       for (int i=0; i<SIZE_HVV; i++){
         for (int j=0; j<2; j++){
           Hvvcoupl[i][j] = (selfDSpinZeroCoupl.Hzzcoupl)[i][j];
@@ -1032,7 +1031,7 @@ double TEvtProb::XsecCalc_TTX(
     double Hqqcoupl[SIZE_HQQ][2]={ { 0 } };
     if (process == TVar::HSMHiggs) Hqqcoupl[gHIGGS_KAPPA][0] = 1.;
     else if (process == TVar::H0minus) Hqqcoupl[gHIGGS_KAPPA_TILDE][0] = 1.;
-    else if (process == TVar::SelfDefine_spin0){
+    else if (process == TVar::SelfDefine_spin0  || process == TVar::SelfDefine_phase_space){
       for (int i=0; i<SIZE_HQQ; i++){
         for (int j=0; j<2; j++){
           if ((selfDSpinZeroCoupl.Httcoupl)[i][j]!=0. && production == TVar::ttH) Hqqcoupl[i][j] = (selfDSpinZeroCoupl.Httcoupl)[i][j];
