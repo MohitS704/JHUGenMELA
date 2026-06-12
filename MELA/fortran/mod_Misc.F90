@@ -1571,7 +1571,7 @@ function CalculatesXsec(Process)
   integer :: Process
   logical :: CalculatesXsec
   CalculatesXsec=.false.
-  if (Process.le.2) then
+  if (Process.le.12) then
     CalculatesXsec=.true.
   elseif (Process.eq.50) then
     CalculatesXsec=.false.

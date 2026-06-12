@@ -28,6 +28,7 @@
       real(dp) :: intcolfac
       integer :: ordering(1:4),ordering_swap(1:4)
       logical :: doInterference
+
       if(IsAQuark(MY_IDUP(6)) .and. IsAQuark(MY_IDUP(8))) then
          intcolfac=1.0_dp/3.0_dp
       else
