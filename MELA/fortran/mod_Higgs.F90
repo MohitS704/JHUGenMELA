@@ -351,15 +351,16 @@
          !fL_SM = 0.61235725497447170
          if (VVMode.eq.ZZMode) then
             fL_SM = 0.61235725879669189
+            exp_sqrt_fTr_SM = 0.5969446803955207
          else if (VVMode.eq.WWMode) then
             fL_SM = 0.6016220637237072
+            exp_sqrt_fTr_SM = 0.6083397716961501
          else
             print *, "It's unkown for other decay mode!!! Please simulate the sample and add it to the Generator!!! --Zhiyuan"
             stop 1
          endif
 
          fTr_SM = 1 - fL_SM
-         exp_sqrt_fTr_SM = 0.5969446803955207
 
          xxx1 = ahg1
          xxx3 = ahg3
