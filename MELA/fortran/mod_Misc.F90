@@ -1542,9 +1542,9 @@ character(len=*) :: title
     write(TheUnit, *) " ", CenterWithStars("Spin and parity determination of single-produced resonances at hadron colliders", linelength)
     write(TheUnit, *) " ", CenterWithStars("", linelength)
     write(TheUnit, *) " ", CenterWithStars("I. Anderson, S. Bolognesi, F. Caola, J. Davis, Y. Gao, A. V. Gritsan,", linelength)
-    write(TheUnit, *) " ", CenterWithStars("L. S. Mandacaru Guerra, Z. Guo, L. Kang, S. Kyriacou, C. B. Martin, T. Martini,", linelength)
-    write(TheUnit, *) " ", CenterWithStars("K. Melnikov, R. Pan, M. Panagiotou, R. Rontsch, J. Roskes, U. Sarica,", linelength)
-    write(TheUnit, *) " ", CenterWithStars("M. Schulze, M. V. Srivastav, N. V. Tran, A. Whitbeck, M. Xiao, Y. Zhou", linelength)
+    write(TheUnit, *) " ", CenterWithStars("L. S. Mandacaru Guerra, Z. Guo, Z. Huang, L. Kang, S. Kyriacou, C. B. Martin,", linelength)
+    write(TheUnit, *) " ", CenterWithStars("T. Martini, K. Melnikov, R. Pan, M. Panagiotou, R. Rontsch, J. Roskes,", linelength)
+    write(TheUnit, *) " ", CenterWithStars("U. Sarica, M. Schulze, M. V. Srivastav, N. V. Tran, A. Whitbeck, M. Xiao, Y. Zhou", linelength)
     write(TheUnit, *) " ", CenterWithStars("Phys.Rev. D81 (2010) 075022;  arXiv:1001.3396  [hep-ph],", linelength)
     write(TheUnit, *) " ", CenterWithStars("Phys.Rev. D86 (2012) 095031;  arXiv:1208.4018  [hep-ph],", linelength)
     write(TheUnit, *) " ", CenterWithStars("Phys.Rev. D89 (2014) 035007;  arXiv:1309.4819  [hep-ph],", linelength)
@@ -1571,7 +1571,7 @@ function CalculatesXsec(Process)
   integer :: Process
   logical :: CalculatesXsec
   CalculatesXsec=.false.
-  if (Process.le.2) then
+  if (Process.le.12) then
     CalculatesXsec=.true.
   elseif (Process.eq.50) then
     CalculatesXsec=.false.

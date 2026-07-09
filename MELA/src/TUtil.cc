@@ -4235,6 +4235,8 @@ void TUtil::SetMCFMAZffCouplings(bool useBSM, AZffCouplings const* Zcouplings){
     anomzffcouplings_.cranou = (Zcouplings->AZffcoupl)[gAZff_uZRH][0];
     anomzffcouplings_.clanod = (Zcouplings->AZffcoupl)[gAZff_dZLH][0];
     anomzffcouplings_.cranod = (Zcouplings->AZffcoupl)[gAZff_dZRH][0];
+    anomzffcouplings_.clanot = (Zcouplings->AZffcoupl)[gAZff_tZLH][0];
+    anomzffcouplings_.cranot = (Zcouplings->AZffcoupl)[gAZff_tZRH][0];
   }
   else{
     // SM
@@ -4251,20 +4253,26 @@ void TUtil::SetMCFMAZffCouplings(bool useBSM, AZffCouplings const* Zcouplings){
     anomzffcouplings_.cranou = 0;
     anomzffcouplings_.clanod = 0;
     anomzffcouplings_.cranod = 0;
+    anomzffcouplings_.clanot = 0;
+    anomzffcouplings_.cranot = 0;
   }
 }
-void TUtil::SetJHUGenSpinZeroVVCouplings(double Hvvcoupl[SIZE_HVV][2], double Hvvpcoupl[SIZE_HVV][2], double Hvpvpcoupl[SIZE_HVV][2], int Hvvcoupl_cqsq[SIZE_HVV_CQSQ], double HvvLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ], bool useWWcoupl){
+
+void TUtil::SetJHUGenSpinZeroVVCouplings(double Hvvcoupl[SIZE_HVV][2], double Hvvpcoupl[SIZE_HVV][2], double Hvpvpcoupl[SIZE_HVV][2], int Hvvcoupl_cqsq[SIZE_HVV_CQSQ], double HvvLambda_qsq[SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ], bool useWWcoupl, double HvvPLcoupl, double HvvfPerpcoupl, double Hvv_as_coupl[SIZE_as_HVV][2], int calc_fL){
+
   const double GeV = 1./100.;
   int iWWcoupl = (useWWcoupl ? 1 : 0);
   for (int c=0; c<SIZE_HVV_LAMBDAQSQ; c++){ for (int k=0; k<SIZE_HVV_CQSQ; k++) HvvLambda_qsq[c][k] *= GeV; } // GeV units in JHUGen
-  __modjhugenmela_MOD_setspinzerovvcouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, Hvvcoupl_cqsq, HvvLambda_qsq, &iWWcoupl);
+
+  __modjhugenmela_MOD_setspinzerovvcouplings(Hvvcoupl, Hvvpcoupl, Hvpvpcoupl, Hvvcoupl_cqsq, HvvLambda_qsq, &iWWcoupl, &HvvPLcoupl, &HvvfPerpcoupl, Hvv_as_coupl, &calc_fL);
 }
 void TUtil::SetJHUGenSpinZeroGGCouplings(double Hggcoupl[SIZE_HGG][2]){ __modjhugenmela_MOD_setspinzeroggcouplings(Hggcoupl); }
 void TUtil::SetJHUGenSpinZeroQQCouplings(double Hqqcoupl[SIZE_HQQ][2]){ __modjhugenmela_MOD_setspinzeroqqcouplings(Hqqcoupl); }
 void TUtil::SetJHUGenSpinOneCouplings(double Zqqcoupl[SIZE_ZQQ][2], double Zvvcoupl[SIZE_ZVV][2]){ __modjhugenmela_MOD_setspinonecouplings(Zqqcoupl, Zvvcoupl); }
-void TUtil::SetJHUGenSpinTwoCouplings(double Gacoupl[SIZE_GGG][2], double Gvvcoupl[SIZE_GVV][2], double Gvvpcoupl[SIZE_GVV][2], double Gvpvpcoupl[SIZE_GVV][2], double qLeftRightcoupl[SIZE_GQQ][2]){
-  __modjhugenmela_MOD_setspintwocouplings(Gacoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, qLeftRightcoupl);
+void TUtil::SetJHUGenSpinTwoCouplings(double Gacoupl[SIZE_GGG][2], double Gvvcoupl[SIZE_GVV][2], double Gvvpcoupl[SIZE_GVV][2], double Gvpvpcoupl[SIZE_GVV][2], double qLeftRightcoupl[SIZE_GQQ][2], int calc_fAmp){
+  __modjhugenmela_MOD_setspintwocouplings(Gacoupl, Gvvcoupl, Gvvpcoupl, Gvpvpcoupl, qLeftRightcoupl, &calc_fAmp);
 }
+
 void TUtil::SetJHUGenVprimeContactCouplings(double Zpffcoupl[SIZE_Vpff][2], double Wpffcoupl[SIZE_Vpff][2]){
   __modjhugenmela_MOD_setvprimecontactcouplings(Zpffcoupl, Wpffcoupl);
 }
@@ -4943,6 +4951,9 @@ double TUtil::JHUGenMatEl(
     || process == TVar::H0_Zgsg1prime2
     || process == TVar::SelfDefine_spin0
     );
+  bool isSpinPhase = (
+    process == TVar::SelfDefine_phase_space
+  );
   bool isSpinOne = (
     process == TVar::H1minus
     || process == TVar::H1plus
@@ -4962,12 +4973,13 @@ double TUtil::JHUGenMatEl(
     || process == TVar::H2_g10
     || process == TVar::SelfDefine_spin2
     );
-  if (!(isSpinZero || isSpinOne || isSpinTwo)){ if (verbosity>=TVar::ERROR) MELAerr << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " (" << process << ")" << " not supported." << endl; return MatElSq; }
+  if (!(isSpinZero || isSpinOne || isSpinTwo || isSpinPhase)){ if (verbosity>=TVar::ERROR) MELAerr << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " (" << process << ")" << " not supported." << endl; return MatElSq; }
   if (verbosity>=TVar::DEBUG){
     MELAout << "TUtil::JHUGenMatEl: Process " << TVar::ProcessName(process) << " is computing a spin-";
     if (isSpinZero) MELAout << "0";
     else if (isSpinOne) MELAout << "1";
     else if (isSpinTwo) MELAout << "2";
+    else if (isSpinPhase) MELAout << "10";
     else MELAout << "?";
     MELAout << " ME with production " << TVar::ProductionName(production) << "." << endl;
   }
@@ -5213,6 +5225,7 @@ double TUtil::JHUGenMatEl(
       double MatElTmp=0.;
       if (production == TVar::ZZGG){
         if (isSpinZero) __modhiggs_MOD_evalamp_gg_h_vv(p4, MYIDUP, &MatElTmp);
+        else if (isSpinPhase) __modhiggs_MOD_evalamp_gg_h_vv_phase(p4, MYIDUP, &MatElTmp);
         else if (isSpinTwo) __modgraviton_MOD_evalamp_gg_g_vv(p4, MYIDUP, &MatElTmp);
       }
       else if (production == TVar::ZZQQB){

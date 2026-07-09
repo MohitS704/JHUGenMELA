@@ -1063,6 +1063,15 @@ public:
   double selfDHzzcoupl[nSupportedHiggses][SIZE_HVV][2];
   /** Couplings between the Higgs and the W Boson */
   double selfDHwwcoupl[nSupportedHiggses][SIZE_HVV][2];
+  //use generate as to do calculation
+  double selfDHvv_as_coupl[SIZE_as_HVV][2];
+  
+  //polarization study
+  int calc_fL;
+  bool sethMassWidth=false;
+  double selfHvvPLcoupl;
+  double selfHvvfPerpcoupl;
+  //polarization study
   double selfDHzzLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ];
   double selfDHwwLambda_qsq[nSupportedHiggses][SIZE_HVV_LAMBDAQSQ][SIZE_HVV_CQSQ];
   int selfDHzzCLambda_qsq[nSupportedHiggses][SIZE_HVV_CQSQ];
@@ -1086,6 +1095,9 @@ public:
   double selfDZqqcoupl[SIZE_ZQQ][2];
   double selfDZvvcoupl[SIZE_ZVV][2];
   //****Spin-2****//
+  //polarization study
+  int calc_fAmp;
+  //polarization study
   double selfDGqqcoupl[SIZE_GQQ][2];
   double selfDGggcoupl[SIZE_GGG][2];
   double selfDGvvcoupl[SIZE_GVV][2];

@@ -6,10 +6,10 @@
 
 
 !----- notation for subroutines
-      public :: EvalAmp_gg_H_VV
+      public :: EvalAmp_gg_H_VV, EvalAmp_gg_H_VV_phase
       public :: EvalAmp_H_VV
       public :: EvalAmp_H_FF, EvalAmp_H_TT_decay
-      public :: calcHelAmp,calcHelAmp2
+      public :: calcHelAmp,calcHelAmp2,calcHelAmp_phase
 
       CONTAINS
 
@@ -227,6 +227,24 @@
       complex(dp) :: ghz1_dyn,ghz2_dyn,ghz3_dyn,ghz4_dyn
       real(dp) :: q34
       real(dp) :: q_q, q3_q3, q4_q4
+      real(dp) :: X_paper
+      real(dp) :: yyy2_constant
+      real(dp) :: g1_constant
+      real(dp) :: epsilon
+      !real(dp) :: total_amp
+      real(dp) :: fL_SM
+      real(dp) :: fTr_SM
+      real(dp) :: exp_sqrt_fTr_SM
+      real(dp) :: yyy3_Constant
+      !real(dp) :: abs_fLP
+      real(dp) :: abs_yyy2
+      real(dp) :: abs_yyy3
+      real(dp) :: fL_prime
+      real(dp) :: eta
+      real(dp) :: tmp
+      real(dp) :: fL_constatnt
+      real(dp) :: fT_constant
+
 
 
       res = 0d0
@@ -321,7 +339,7 @@
          print *,"VVMode",VVMode,"not implemented"
       endif
 
-      if( .not. generate_as ) then
+      if ((calc_fL < 1) .and. (.not. generate_as) ) then
          xxx1 = ghg2+ghg3/4d0/Lambda**2*q_q
          xxx3 = -2d0*ghg4
          yyy1 = ghz1_dyn*M_V**2/q_q &  ! in this line M_V is indeed correct, not a misprint
@@ -329,6 +347,137 @@
               + ghz3_dyn/Lambda**2*(q_q-q3_q3-q4_q4)*(q_q-q4_q4-q3_q3)/4d0/q_q
          yyy2 = -2d0*ghz2_dyn-ghz3_dyn/2d0/Lambda**2*(q_q-q3_q3-q4_q4)
          yyy3 = -2d0*ghz4_dyn
+      elseif ((calc_fL .eq. 1) .and. (.not. generate_as)) then 
+         !fL_SM = 0.61235725497447170
+         if (VVMode.eq.ZZMode) then
+            fL_SM = 0.61235725879669189
+            exp_sqrt_fTr_SM = 0.5969446803955207
+         else if (VVMode.eq.WWMode) then
+            fL_SM = 0.6016220637237072
+            exp_sqrt_fTr_SM = 0.6083397716961501
+         else
+            print *, "It's unkown for other decay mode!!! Please simulate the sample and add it to the Generator!!! --Zhiyuan"
+            stop 1
+         endif
+
+         fTr_SM = 1 - fL_SM
+
+         xxx1 = ahg1
+         xxx3 = ahg3
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         !=====Modify for HZZ entanglement=====!
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         yyy3_Constant =  sqrt(q3_q3*q4_q4*X_paper)/q_q
+
+         if (abs(fPerp) < 1) then
+            fL_prime = abs(fL) / (1 - abs(fPerp))
+            if (fL_prime > 1) then
+               fL_prime = 1
+            endif
+            abs_yyy3 = sqrt(abs(fPerp) / (2*(1 - abs(fPerp))) * (X_paper + 3)) 
+            
+            eta = sqrt(abs((1 - fL_prime) * (fL_prime/fTr_SM + 1)))
+
+            epsilon = (-2*(exp_sqrt_fTr_SM*eta -1) - sqrt(4*(exp_sqrt_fTr_SM*eta-1)**2 - 4*(fL_prime)*(fTr_SM*eta**2 - 2*exp_sqrt_fTr_SM*eta + 1)))/(2*(fTr_SM*eta**2-2*exp_sqrt_fTr_SM*eta + 1))
+
+            yyy1 = abs(epsilon*eta + (1 - epsilon)*sqrt((X_paper + 3) / 2)) 
+
+            tmp = abs((X_paper+3) - 2 * yyy1**2)
+            if (fL < 0) then
+                  yyy2 = (-sqrt(tmp) - yyy1 * sqrt(X_paper + 1))
+            else
+                  yyy2 = (sqrt(tmp) - yyy1 * sqrt(X_paper + 1))      
+            endif
+            yyy1 = yyy1 * sqrt(1 - abs(fPerp)) * g1_constant
+            yyy2 = yyy2 * sqrt(1 - abs(fPerp))  / yyy2_Constant * g1_constant
+            abs_yyy3 = abs_yyy3 * sqrt(1 - abs(fPerp)) / yyy3_Constant * g1_constant
+            
+         else
+            abs_yyy3 = sqrt(abs(fPerp) * (X_paper + 3) / 2) / yyy3_Constant * g1_constant
+            yyy1 = 0
+            yyy2 = 0
+         endif
+         
+         if (fPerp > 0) then
+            yyy3 = abs_yyy3
+         elseif (fPerp < 0) then
+            yyy3 = -abs_yyy3
+         else
+            yyy3 = 0
+         endif
+         !print *,epsilon, yyy1, yyy2, yyy3, fL_prime
+
+         !=====Modify for HZZ entanglement=====!
+         !=====back up code=====!
+         !Version 1
+         !abs_fLP = abs(fL) + abs(fPerp) !Longitudinal + Perpendicular
+         !yyy1 = sqrt((1 - abs_fLP) / fTr_SM)  * g1_constant
+         !if (fL < 0) then
+         !   yyy2 = (-sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+         !else
+         !   yyy2 = (sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+         !endif
+         !print *,  sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2 ), sqrt(total_amp * abs(fL))
+         !print *, yyy1, abs_yyy2, yyy3, 1./yyy2_Constant*g1_constant*sqrt(X_paper + 3)
+
+         !Version 2
+         !total_amp = (X_paper+3)*(1 + abs(fPerp))* g1_constant**2
+            
+            !if (fL_prime > fL_SM) then
+               !if (fL_prime > 1) then
+                  !print *, fL, fPerp, fL_prime
+               !   fL_prime = 1.
+                  !print *, fL_prime
+               !endif
+               !yyy1 = sqrt((1 - abs(fL_prime)) / (fTr_SM)) * g1_constant
+               !tmp = (X_paper+3)*g1_constant**2 - 2 * yyy1**2
+               !if (fL < 0) then
+               !     yyy2 = (-sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !else
+               !     yyy2 = (sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !endif
+
+            !else
+
+               !epsilon = (-2 * (exp_sqrt_fTr_SM - 1) - sqrt(4*(exp_sqrt_fTr_SM - 1)**2 - 4*(fL_prime)*(fTr_SM - 2*exp_sqrt_fTr_SM + 1))) &
+               !/ (2 * (fTr_SM - 2*exp_sqrt_fTr_SM + 1))
+               !print *, epsilon
+               !yyy1 =  (epsilon + (1 - epsilon)*sqrt((X_paper + 3) / 2)) * g1_constant
+               !tmp = (X_paper+3)*g1_constant**2 - 2 * yyy1**2
+               
+               !if (fL < 0) then 
+               !   yyy2 = (-sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !else
+               !   yyy2 = (sqrt(tmp) - yyy1*sqrt(X_paper + 1)) / yyy2_Constant
+               !endif
+               
+            !print *, "epsilon", epsilon, sqrt(total_amp*(1 - abs(fPerp)) - 2 * yyy1**2 ), sqrt(total_amp * abs(fL))
+         !=====back up code=====!
+      !==== Strategy 2 ====!
+      !==== Warning: This will change the mass distribution of Z mass ====!
+      elseif ((calc_fL .eq. 2) .and. (.not. generate_as)) then
+         xxx1 = ahg1
+         xxx3 = ahg3
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         if (fL .eq. 1) then
+            yyy1 = 0
+            yyy2 = fL / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         elseif (fL .eq. 0) then
+            yyy1 = g1_constant
+            yyy2 = -1 / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         endif
+      !==== Warning: This will change the mass distribution of Z mass ====!
+      !==== Strategy 2 ====!
+
       else
          xxx1 = ahg1
          xxx3 = ahg3
@@ -541,6 +690,21 @@
       complex(dp) :: q1(4),q3(4),q4(4),q(4)
       complex(dp) :: e3(4),e4(4)
       complex(dp) :: yyy1,yyy2,yyy3,yyy4
+      real(dp) :: X_paper
+      real(dp) :: yyy2_constant
+      real(dp) :: g1_constant
+      real(dp) :: epsilon
+      real(dp) :: fL_SM
+      real(dp) :: fTr_SM
+      real(dp) :: exp_sqrt_fTr_SM
+      real(dp) :: yyy3_Constant
+      real(dp) :: abs_yyy2
+      real(dp) :: abs_yyy3
+      real(dp) :: fL_prime
+      real(dp) :: eta
+      real(dp) :: tmp
+      real(dp) :: fL_constatnt
+      real(dp) :: fT_constant
       real(dp) :: q34
       real(dp) :: q_q, q3_q3, q4_q4
       complex(dp) :: ghz1_dyn,ghz2_dyn,ghz3_dyn,ghz4_dyn
@@ -624,12 +788,86 @@
          print *,"VVMode",VVMode,"not implemented"
       endif
 
-      if( .not. generate_as ) then
+      if ((calc_fL < 1) .and. (.not. generate_as) ) then
          yyy1 = ghz1_dyn*M_V**2/q_q &  ! in this line M_V is indeed correct, not a misprint
               + ghz2_dyn*(q_q-q3_q3-q4_q4)/q_q &
               + ghz3_dyn/Lambda**2*(q_q-q3_q3-q4_q4)*(q_q-q4_q4-q3_q3)/4d0/q_q
          yyy2 = -2d0*ghz2_dyn-ghz3_dyn/2d0/Lambda**2*(q_q-q3_q3-q4_q4)
          yyy3 = -2d0*ghz4_dyn
+      elseif ((calc_fL .eq. 1) .and. (.not. generate_as)) then 
+         
+         !fL_SM = 0.61235725497447170
+         fL_SM = 0.61235725879669189
+         fTr_SM = 1 - fL_SM
+         exp_sqrt_fTr_SM = 0.5969446803955207
+
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         !=====Modify for HZZ entanglement=====!
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         yyy3_Constant =  sqrt(q3_q3*q4_q4*X_paper)/q_q
+
+         if (abs(fPerp) < 1) then
+            fL_prime = abs(fL) / (1 - abs(fPerp))
+            if (fL_prime > 1) then
+               fL_prime = 1
+            endif
+            abs_yyy3 = sqrt(abs(fPerp) / (2*(1 - abs(fPerp))) * (X_paper + 3)) 
+            
+            eta = sqrt(abs((1 - fL_prime) * (fL_prime/fTr_SM + 1)))
+
+            epsilon = (-2*(exp_sqrt_fTr_SM*eta -1) - sqrt(4*(exp_sqrt_fTr_SM*eta-1)**2 - 4*(fL_prime)*(fTr_SM*eta**2 - 2*exp_sqrt_fTr_SM*eta + 1)))/(2*(fTr_SM*eta**2-2*exp_sqrt_fTr_SM*eta + 1))
+
+            yyy1 = abs(epsilon*eta + (1 - epsilon)*sqrt((X_paper + 3) / 2)) 
+
+            tmp = abs((X_paper+3) - 2 * yyy1**2)
+            if (fL < 0) then
+                  yyy2 = (-sqrt(tmp) - yyy1 * sqrt(X_paper + 1))
+            else
+                  yyy2 = (sqrt(tmp) - yyy1 * sqrt(X_paper + 1))      
+            endif
+            yyy1 = yyy1 * sqrt(1 - abs(fPerp)) * g1_constant
+            yyy2 = yyy2 * sqrt(1 - abs(fPerp))  / yyy2_Constant * g1_constant
+            abs_yyy3 = abs_yyy3 * sqrt(1 - abs(fPerp)) / yyy3_Constant * g1_constant
+            
+         else
+            abs_yyy3 = sqrt(abs(fPerp) * (X_paper + 3) / 2) / yyy3_Constant * g1_constant
+            yyy1 = 0
+            yyy2 = 0
+         endif
+         
+         if (fPerp > 0) then
+            yyy3 = abs_yyy3
+         elseif (fPerp < 0) then
+            yyy3 = -abs_yyy3
+         else
+            yyy3 = 0
+         endif
+         !print *,epsilon, yyy1, yyy2, yyy3, fL_prime
+
+         !=====Modify for HZZ entanglement=====!
+         !==== Strategy 2 ====!
+         !==== Warning: This will change the mass distribution of Z mass ====!
+      elseif ((calc_fL .eq. 2) .and. (.not. generate_as)) then
+         yyy1 = 0
+         yyy2 = 0
+         yyy3 = 0
+         X_paper = (q_q-q4_q4-q3_q3)**2/(4*q3_q3*q4_q4)-1
+         yyy2_Constant = sqrt(q3_q3*q4_q4)*X_paper/q_q
+         g1_constant= M_V**2/q_q !all yyys should be multipled by this constant
+         if (fL .eq. 1) then
+            yyy1 = 0
+            yyy2 = fL / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         elseif (fL .eq. 0) then
+            yyy1 = g1_constant
+            yyy2 = -1 / yyy2_Constant * sqrt(X_paper + 1) * g1_constant
+         endif
+         !==== Warning: This will change the mass distribution of Z mass ====!
+         !==== Strategy 2 ====!
+
       else
          if( (VVMode.eq.ZZMode) .or. (VVMode.eq.WWMode)  ) then! decay ZZ's or WW's
             yyy1 = ahz1
@@ -1502,6 +1740,96 @@ subroutine getDecay_VVMode_Ordering(MY_IDUP, VVMode,ordering,VVMode_swap,orderin
    return
 end subroutine
 
+
+   SUBROUTINE EvalAmp_gg_H_VV_phase(p,MY_IDUP,res)
+   implicit none
+   real(dp), intent(out) ::  res
+   real(dp), intent(in) :: p(4,6)
+   integer, intent(in) :: MY_IDUP(6:9)
+   complex(dp) :: A_VV(1:18), A0_VV(1:2)
+   integer :: i1,i2,i3,i4,VVMode,VVmode_swap
+   real(dp) :: prefactor!,res2
+   real(dp) :: intcolfac
+   integer :: ordering(1:4),ordering_swap(1:4)
+   logical :: doInterference
+   if(IsAQuark(MY_IDUP(6)) .and. IsAQuark(MY_IDUP(8))) then
+      intcolfac=1.0_dp/3.0_dp
+   else
+      intcolfac=1.0_dp
+   endif
+
+   call getDecay_VVMode_Ordering(MY_IDUP(6:9),VVMode,ordering,VVmode_swap,ordering_swap)
+
+! Global normalization
+   if( VVMode.eq.ZZMode ) then!  Z decay
+      prefactor = 8d0*overallCouplVffsq**2
+   elseif( VVMode.eq.WWMode ) then !  W decay
+      prefactor = 8d0*overallCouplVffsq**2
+   elseif( VVMode.eq.ZgMode ) then !  Z+photon "decay"
+      prefactor = 8d0*overallCouplVffsq ! Only single powers
+   elseif( VVMode.eq.ggMode ) then !  photon "decay"
+      prefactor = 8d0
+   else
+      prefactor = 0d0
+   endif
+   prefactor = prefactor * (alphas/(3.0_dp*pi*vev))**2
+
+         res = zero
+         A_VV(:) = 0d0
+         doInterference = includeInterference .and. (         &
+         ((VVMode.eq.ZZMode) .and. (VVMode_swap.eq.ZZMode)) &
+         )
+         if ( includeVprime .and. .not.(VVMode.eq.ZZMode .or. VVMode.eq.ZgMode .or. VVMode.eq.WWMode) ) then
+            call Error("Contact terms only for WW, ZZ or Zg!")
+         endif
+         do i1=1,2;  do i2=1,2;  do i3=1,2;  do i4=1,2!  sum over helicities
+               call calcHelAmp_phase(ordering,VVMode,MY_IDUP,p(1:4,1:6),i1,i2,i3,i4,A_VV(1))
+               if( doInterference ) then
+                     call calcHelAmp_phase(ordering_swap,VVMode_swap,MY_IDUP,p(1:4,1:6),i1,i2,i3,i4,A_VV(2))
+               endif
+
+               A0_VV(1) = A_VV(1)+A_VV(3)+A_VV(5)+A_VV(7)+A_VV(9)+A_VV(11)+A_VV(13)+A_VV(15)+A_VV(17) ! 3456 pieces
+               A0_VV(2) = A_VV(2)+A_VV(4)+A_VV(6)+A_VV(8)+A_VV(10)+A_VV(12)+A_VV(14)+A_VV(16)+A_VV(18) ! 5436 pieces
+               res = res + dreal(A0_VV(1)*dconjg(A0_VV(1)))
+               res = res + dreal(A0_VV(2)*dconjg(A0_VV(2)))
+               if( doInterference .and. (i3.eq.i4) ) then! interfere the 3456 with 5436 pieces
+                     res = res - 2d0*intcolfac*dreal(  A0_VV(1)*dconjg(A0_VV(2))  ) ! minus from Fermi statistics
+               endif
+         enddo;  enddo;  enddo;  enddo
+
+          res = res*prefactor
+          if( (VVMode.eq.ZZMode) .and. doInterference ) res = res * SymmFac
+      RETURN
+      END SUBROUTINE
+
+   subroutine calcHelAmp_phase(ordering,VVMode,MY_IDUP,p,i1,i2,i3,i4,A)
+      implicit none
+      integer :: ordering(1:4),VVMode,i1,i2,i3,i4,l1,l2,l3,l4,MY_IDUP(6:9)
+      real(dp) :: p(1:4,1:6)
+      complex(dp) :: propG
+      real(dp) :: pin(4,4)
+      complex(dp) :: A(1:1), sp(4,4)
+      real(dp) :: pordered(1:4,6:9)
+      real(dp) :: s
+      complex(dp) :: propV(1:2)
+      l1=ordering(1)
+      l2=ordering(2)
+      l3=ordering(3)
+      l4=ordering(4)
+
+
+      propG = one/dcmplx(2d0*scr(p(:,1),p(:,2)) - M_Reso**2,M_Reso*Ga_Reso)
+      
+      pordered(:,6) = p(:,l1)
+      pordered(:,7) = p(:,l2)
+      pordered(:,8) = p(:,l3)
+      pordered(:,9) = p(:,l4)
+      s = scr(pordered(:,6)+pordered(:,7),pordered(:,6)+pordered(:,7))
+      propV(1) = s/dcmplx(s - M_V**2,M_V*Ga_V)
+      s = scr(pordered(:,8)+pordered(:,9),pordered(:,8)+pordered(:,9))
+      propV(2) = s/dcmplx(s - M_V**2,M_V*Ga_V)
+      A(1) =  propG * propV(1) * propV(2)
+   end subroutine
 
 END MODULE
 

@@ -391,8 +391,14 @@ void Mela::setSpinZeroCouplings(){
     selfDHvvLambda_ff,
     selfDHvvn_ff,
     selfDSMEFTSimcoupl,
-    differentiate_HWW_HZZ
+    selfDHvv_as_coupl,
+    selfHvvPLcoupl,
+    selfHvvfPerpcoupl,
+    differentiate_HWW_HZZ,
+    calc_fL,
+    sethMassWidth
   );
+
   ZZME->set_SpinZeroContact(
     selfDHzzpcoupl,
     selfDHzpzpcoupl,
@@ -412,7 +418,7 @@ void Mela::setSpinOneCouplings(){
   ZZME->set_SpinOneCouplings(selfDZqqcoupl, selfDZvvcoupl);
 }
 void Mela::setSpinTwoCouplings(){
-  ZZME->set_SpinTwoCouplings(selfDGqqcoupl, selfDGggcoupl, selfDGvvcoupl);
+  ZZME->set_SpinTwoCouplings(selfDGqqcoupl, selfDGggcoupl, selfDGvvcoupl, calc_fAmp);
   ZZME->set_SpinTwoContact(selfDGvvpcoupl, selfDGvpvpcoupl);
   ZZME->set_VprimeContactCouplings(
     selfDZpffcoupl,
@@ -472,6 +478,9 @@ void Mela::reset_SelfDCouplings(){
     }
   }
   // Spin-0 contact terms
+  selfHvvPLcoupl = 0;
+  selfHvvfPerpcoupl = 0;
+  calc_fL = 0;
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_HVV; ic++){
       selfDHzzpcoupl[ic][im] = 0;
@@ -479,6 +488,11 @@ void Mela::reset_SelfDCouplings(){
       selfDHwwpcoupl[ic][im] = 0;
       selfDHwpwpcoupl[ic][im] = 0;
     }
+
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+      selfDHvv_as_coupl[ic][im] = 0;
+    }
+
   }
   // Spin-0 self coupling terms
   for (int ic=0; ic<SIZE_HHH; ic++){
@@ -496,6 +510,7 @@ void Mela::reset_SelfDCouplings(){
   }
 
   //****Spin-2****//
+  calc_fAmp = 0;
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_GVV; ic++){
       selfDGvvcoupl[ic][im] = 0;
@@ -1275,7 +1290,7 @@ void Mela::computeP(
     else if (myME_ == TVar::JHUGen || myME_ == TVar::MCFM || myME_ == TVar::MADGRAPH){
       setAZffCouplings();
       if (!(myME_ == TVar::MCFM  && myProduction_ == TVar::ZZINDEPENDENT &&  (myModel_ == TVar::bkgZZ || myModel_ == TVar::bkgWW || myModel_ == TVar::bkgZGamma || myModel_ == TVar::bkgGammaGamma))){
-        if (myME_ == TVar::MCFM || myME_ == TVar::MADGRAPH || myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+        if (myME_ == TVar::MCFM || myME_ == TVar::MADGRAPH || myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
         else if (myModel_ == TVar::SelfDefine_spin1 && myME_ != TVar::MADGRAPH) setSpinOneCouplings();
         else if (myModel_ == TVar::SelfDefine_spin2 && myME_ != TVar::MADGRAPH) setSpinTwoCouplings();
         ZZME->computeXS(prob);
@@ -1638,7 +1653,7 @@ void Mela::computeProdP(
         candCopy->addAssociatedJet(&fakeJet);
         setCurrentCandidate(candCopy);
 
-        if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+        if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
         ZZME->computeProdXS_JJH(prob); // Higgs + 2 jets: SBF or WBF main probability
 
         int nGrid=11;
@@ -1663,7 +1678,7 @@ void Mela::computeProdP(
           TLorentzVector pTotal = higgs+jet1massless+fakeJet.p4;
           double sys = (pTotal.T()+fabs(pTotal.Z()))/2.;
           if (fabs(sys)<threshold){
-            if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+            if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
             ZZME->computeProdXS_JJH(prob_temp);
           }
           pArray.push_back((double)prob_temp);
@@ -1711,7 +1726,7 @@ void Mela::computeProdP(
             TLorentzVector pTotal = higgs+jet1massless+fakeJet.p4;
             double sys = (pTotal.T()+fabs(pTotal.Z()))/2.;
             if (fabs(sys)<threshold){
-              if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+              if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
               ZZME->computeProdXS_JJH(prob_temp);
             }
             gridIt = pArray.begin()+iG+1;
@@ -1759,7 +1774,7 @@ void Mela::computeProdP(
       }
       else{
         if (myProduction_ == TVar::JJQCD || myProduction_ == TVar::JJVBF){
-          if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+          if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
           ZZME->computeProdXS_JJH(prob); // Higgs + 2 jets: SBF or WBF
         }
         else if (myProduction_ == TVar::JQCD){
@@ -1812,7 +1827,7 @@ void Mela::computeProdP_VH(
   melaCand = getCurrentCandidate();
   if (melaCand){
     if (myProduction_ == TVar::Lep_ZH || myProduction_ == TVar::Lep_WH || myProduction_ == TVar::Had_ZH || myProduction_ == TVar::Had_WH || myProduction_ == TVar::GammaH){
-      if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+      if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
       ZZME->computeProdXS_VH(prob, includeHiggsDecay); // VH
 
       if (useConstant) computeConstant(prob);
@@ -1836,7 +1851,7 @@ void Mela::computeProdP_ttH(
 
   melaCand = getCurrentCandidate();
   if (melaCand){
-    if (myModel_ == TVar::SelfDefine_spin0) setSpinZeroCouplings();
+    if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space) setSpinZeroCouplings();
     ZZME->computeProdXS_ttH(prob,topProcess, topDecay);
     if (useConstant) computeConstant(prob);
   }
@@ -2058,7 +2073,7 @@ bool Mela::configureAnalyticalPDFs(){
     if (myModel_ == TVar::H0_gsgs || myModel_ == TVar::D_zzgg) ggSpin0Model->addHypothesis(8, 0);
     if (myModel_ == TVar::H0_gsgs_PS || myModel_ == TVar::D_zzgg_PS) ggSpin0Model->addHypothesis(10, 0);
     // Self-defined spin-0
-    if (myModel_ == TVar::SelfDefine_spin0){
+    if (myModel_ == TVar::SelfDefine_spin0 || myModel_ == TVar::SelfDefine_phase_space){
       for (int im=0; im<2; im++){
         ((RooRealVar*)ggSpin0Model->couplings.g1List[0][im])->setVal(selfDHzzcoupl[0][0][im]);
         ((RooRealVar*)ggSpin0Model->couplings.g2List[0][im])->setVal(selfDHzzcoupl[0][1][im]);
@@ -2393,6 +2408,8 @@ float Mela::getConstant_FourFermionDecay(const int& decid){
         myModel_==TVar::H0_gsgs_PS
         ||
         myModel_==TVar::SelfDefine_spin0
+        || 
+        myModel_==TVar::SelfDefine_phase_space
         ){
         if (is2mu2e) pchandle[0] = pAvgSmooth_JHUGen_ZZGG_HSMHiggs_2mu2e;
         else if (is4mu) pchandle[0] = pAvgSmooth_JHUGen_ZZGG_HSMHiggs_4mu;

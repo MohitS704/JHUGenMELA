@@ -118,7 +118,8 @@ namespace TVar{
     RunningWidth=1,
     FixedWidth=2,
     CPS=3,
-    AltRunningWidth=4
+    AltRunningWidth=4,
+    RunningWidth_Reweight=5
   };
 
   enum Process{
@@ -179,6 +180,7 @@ namespace TVar{
     SelfDefine_spin0,
     SelfDefine_spin1,
     SelfDefine_spin2,
+    SelfDefine_phase_space,
 
     nProcesses
   };

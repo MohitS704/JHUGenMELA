@@ -208,6 +208,13 @@ void ZZMatrixElement::reset_MCFM_EWKParameters(double ext_Gf, double ext_aemmz, 
 // resetPerEvent resets the mass, width and lepton interference settings and deletes the temporary input objects ZZMatrixElement owns.
 void ZZMatrixElement::resetPerEvent(){
   // Protection against forgetfulness; custom width has to be set per-computation
+
+  if (setHMassWidth){
+      for (int i = 0; i < 2; i++){
+        Xcal2.SetHiggsMass(mHiggs[i], wHiggs[i], i+1);
+      }
+  }
+  else{
   set_mHiggs(Xcal2.GetPrimaryHiggsMass(), 0); // Sets mHiggs[0]
   if (wHiggs[0]>=0.) set_wHiggs(-1., 0);
 
@@ -215,6 +222,8 @@ void ZZMatrixElement::resetPerEvent(){
   if (wHiggs[1]>=0.) set_wHiggs(-1., 1);
 
   Xcal2.SetHiggsMass(mHiggs[0], -1, -1);
+
+  }
 
   // Return back to default lepton interference settings after each calculation
   if (processLeptonInterference != TVar::DefaultLeptonInterf) set_LeptonInterference(TVar::DefaultLeptonInterf);
@@ -257,9 +266,19 @@ void ZZMatrixElement::set_SpinZeroCouplings(
   double selfDHvvLambda_ff[nSupportedHiggses][SIZE_HVV_LAMBDAFF],
   int selfDHvvn_ff[nSupportedHiggses][SIZE_HVV_NFF],
   double selfDSMEFTSimcoupl[SIZE_SMEFT],
-  bool diffHWW
+  double selfDHvv_as_coupl[SIZE_as_HVV][2],
+  double selfHvvPLcoupl,
+  double selfHvvfPerpcoupl,
+  bool diffHWW,
+  int calc_fL,
+  bool sethMassWidth
   ){
+  setHMassWidth = sethMassWidth;
   Xcal2.AllowSeparateWWCouplings(diffHWW);
+  /*polarization study*/
+    for (int ic=0; ic<SIZE_as_HVV; ic++){
+    selfD_SpinZeroCouplings->SetHVV_Polarization_Couplings(ic, selfDHvv_as_coupl[ic][0], selfDHvv_as_coupl[ic][1], selfHvvPLcoupl, selfHvvfPerpcoupl, calc_fL);}
+  /*polarization study*/
   for (int jh=1; jh<=(int)nSupportedHiggses; jh++){
     for (int ic=0; ic<SIZE_HGG; ic++) selfD_SpinZeroCouplings->SetHGGCouplings(ic, selfDHggcoupl[jh-1][ic][0], selfDHggcoupl[jh-1][ic][1], 1, jh);
     for (int ic=0; ic<SIZE_HGG; ic++) selfD_SpinZeroCouplings->SetHGGCouplings(ic, selfDHg4g4coupl[jh-1][ic][0], selfDHg4g4coupl[jh-1][ic][1], 2, jh);
@@ -270,7 +289,7 @@ void ZZMatrixElement::set_SpinZeroCouplings(
     for (int ic=0; ic<SIZE_HQQ; ic++) selfD_SpinZeroCouplings->SetHQQCouplings(ic, selfDHb4b4coupl[jh-1][ic][0], selfDHb4b4coupl[jh-1][ic][1], 7, jh);
     for (int ic=0; ic<SIZE_HQQ; ic++) selfD_SpinZeroCouplings->SetHQQCouplings(ic, selfDHt4t4coupl[jh-1][ic][0], selfDHt4t4coupl[jh-1][ic][1], 8, jh);
 
-    for (int ic=0; ic<SIZE_HVV; ic++) selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHzzcoupl[jh-1][ic][0], selfDHzzcoupl[jh-1][ic][1], false, jh);
+    for (int ic=0; ic<SIZE_HVV; ic++) {selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHzzcoupl[jh-1][ic][0], selfDHzzcoupl[jh-1][ic][1], false, jh);}
     for (int ic=0; ic<SIZE_HVV; ic++) selfD_SpinZeroCouplings->SetHVVCouplings(ic, selfDHwwcoupl[jh-1][ic][0], selfDHwwcoupl[jh-1][ic][1], true, jh);
     for (int ik=0; ik<SIZE_HVV_CQSQ; ik++){
       for (int ig=0; ig<SIZE_HVV_LAMBDAQSQ; ig++){
@@ -312,11 +331,13 @@ void ZZMatrixElement::set_SpinOneCouplings(
 void ZZMatrixElement::set_SpinTwoCouplings(
   double selfDGqqcoupl[SIZE_GQQ][2],
   double selfDGggcoupl[SIZE_GGG][2],
-  double selfDGvvcoupl[SIZE_GVV][2]
+  double selfDGvvcoupl[SIZE_GVV][2],
+  int calc_fAmp
   ){
   for (int ic=0; ic<SIZE_GQQ; ic++) selfD_SpinTwoCouplings->SetGQQCouplings(ic, selfDGqqcoupl[ic][0], selfDGqqcoupl[ic][1]);
   for (int ic=0; ic<SIZE_GGG; ic++) selfD_SpinTwoCouplings->SetGGGCouplings(ic, selfDGggcoupl[ic][0], selfDGggcoupl[ic][1]);
-  for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1]);
+  //for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1]);
+  for (int ic=0; ic<SIZE_GVV; ic++) selfD_SpinTwoCouplings->SetGVVCouplings_Polarization_Couplings(ic, selfDGvvcoupl[ic][0], selfDGvvcoupl[ic][1], calc_fAmp);
 }
 void ZZMatrixElement::set_SpinTwoContact(
   double selfDGvvpcoupl[SIZE_GVV][2],
@@ -365,6 +386,11 @@ void ZZMatrixElement::computeXS(
     double zzmass = melaCand->m();
     if (processME == TVar::MCFM){
       for (int jh=0; jh<(int)nSupportedHiggses; jh++) Xcal2.SetHiggsMass(mHiggs[jh], wHiggs[jh], jh+1);
+    }
+    
+    else if (setHMassWidth){
+      //for (int jh=0; jh<2; jh++) Xcal2.SetHiggsMass(zzmass, wHiggs[jh], jh+1);
+      for (int jh=0; jh<2; jh++) Xcal2.SetHiggsMass(mHiggs[jh], wHiggs[jh], jh+1);
     }
     else Xcal2.SetHiggsMass(zzmass, wHiggs[0], -1);
 
@@ -476,7 +502,12 @@ void ZZMatrixElement::get_XPropagator(TVar::ResonancePropagatorScheme scheme, fl
   melaCand = get_CurrentCandidate();
 
   if (melaCand){
-    Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], -1);
+    if (setHMassWidth) {
+      Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], 0);
+    }
+    else {
+      Xcal2.SetHiggsMass(mHiggs[0], wHiggs[0], -1);
+    }
     prop=Xcal2.GetXPropagator(scheme);
   }
 

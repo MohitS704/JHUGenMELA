@@ -268,6 +268,8 @@ extern "C" {
     double cranou;
     double clanod;
     double cranod;
+    double clanot;
+    double cranot;
   } anomzffcouplings_;
 
   extern struct {

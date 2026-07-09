@@ -101,7 +101,12 @@ public:
     double selfDHvvLambda_ff[nSupportedHiggses][SIZE_HVV_LAMBDAFF],
     int selfDHvvn_ff[nSupportedHiggses][SIZE_HVV_NFF],
     double selfDSMEFTSimcoupl[SIZE_SMEFT],
-    bool diffHWW = false
+    double selfDHvv_as_coupl[SIZE_as_HVV][2],
+    double selfHvvPLcoupl,
+    double selfHvvfPerpcoupl,
+    bool diffHWW = false,
+    int calc_fL = 0,
+    bool sethMassWidth = false
     );
   void set_SpinZeroContact(
     double selfDHzzpcoupl[SIZE_HVV][2],
@@ -116,7 +121,8 @@ public:
   void set_SpinTwoCouplings(
     double selfDGqqcoupl[SIZE_GQQ][2],
     double selfDGggcoupl[SIZE_GGG][2],
-    double selfDGvvcoupl[SIZE_GVV][2]
+    double selfDGvvcoupl[SIZE_GVV][2],
+    int calc_fAmp
     );
   void set_SpinTwoContact(
     double selfDGvvpcoupl[SIZE_GVV][2],
@@ -162,6 +168,7 @@ protected:
   double EBEAM;
   double mHiggs[nSupportedHiggses];
   double wHiggs[nSupportedHiggses];
+  bool setHMassWidth=false;
   TEvtProb Xcal2;
 
   SpinZeroCouplings* selfD_SpinZeroCouplings;
