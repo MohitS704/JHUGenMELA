@@ -44,7 +44,7 @@ ROOTINC = $(ROOFITINC)
 CC = g++
 CPPINC = -I$(MELADIR)/interface $(ROOTINC)
 CPPLOAD = -L$(MELALIBDIR) -lmcfm_711 -ljhugenmela -lcollier -lMG_SMEFTsim_v2 $(LIBS)
-CPPOPTS =  -fPIC -O2 -ftree-vectorize -fipa-pta -felide-constructors -fvisibility-inlines-hidden -fno-math-errno \
+CPPOPTS =  -fPIC -ftree-vectorize -fipa-pta -felide-constructors -fvisibility-inlines-hidden -fno-math-errno \
 	--param vect-max-version-for-alias-checks=50 -fmessage-length=0 -fdiagnostics-show-option \
 	-Werror=unused-value -g \
 	 $(shell root-config --cflags) -D_melapkgpath_=$(MELAPKGPATH)
