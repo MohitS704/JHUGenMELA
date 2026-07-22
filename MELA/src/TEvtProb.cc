@@ -739,8 +739,9 @@ double TEvtProb::XsecCalc_XVV(){
   } // end of JHUGen matrix element calculations
   else if (matrixElement == TVar::MADGRAPH){
     calculateME = (
-      production == TVar::ZZGG ||
-      production == TVar::ZZQQB
+      production == TVar::ZZGG  ||
+      production == TVar::ZZQQB ||
+      production == TVar::JJEW
     );
     if (calculateME){
       SetMadgraphSpinZeroCouplings(&selfDSpinZeroCoupl);
