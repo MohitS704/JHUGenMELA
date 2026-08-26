@@ -538,6 +538,7 @@ void Mela::reset_SelfDCouplings(){
   for (int im=0; im<2; im++){
     for (int ic=0; ic<SIZE_ATQGC; ic++) selfDaTQGCcoupl[ic][im] = 0;
   }
+  selfDaTQGCcoupl[gAlpha_SMEW][0] = 1; //set alpha_SMEW to be 1!
 
   // AZff couplings
   for (int im=0; im<2; im++){

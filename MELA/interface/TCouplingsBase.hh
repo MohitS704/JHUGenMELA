@@ -237,6 +237,7 @@ namespace{
     gATQGC_dZAWpWm,
     gATQGC_dZZWpWm,
 
+    gAlpha_SMEW,
     SIZE_ATQGC
   };
   enum CouplingIndex_AZff{

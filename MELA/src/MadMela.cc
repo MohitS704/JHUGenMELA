@@ -249,6 +249,7 @@ Block QNUMBERS 9000008  # h1
 void madMela::setDefaultMadgraphValues(){
     //Now WIPE all the couplings!!!
     // params_r_.mdl_cg = 0;
+    
     params_r_.mdl_cw = 0;
     params_r_.mdl_ch = 0;
     params_r_.mdl_chbox = 0;
@@ -340,10 +341,10 @@ void madMela::setDefaultMadgraphValues(){
 
 void madMela::initialize_madMELA(){
 
-    // params_r_.mdl_ckmlambda = 2.265000e-01;
-    // params_r_.mdl_ckma = 7.900000e-01;
-    // params_r_.mdl_ckmrho = 1.410000e-01;
-    // params_r_.mdl_ckmeta = 0;
+    // params_r_.mdl_lamws = 2.253000e-01;
+    // params_r_.mdl_aws = 8.080000e-01;
+    // params_r_.mdl_rhows = 1.320000e-01;
+    // params_r_.mdl_etaws = 3.410000e-01;
 
     params_r_.mdl_lambdasmeft = 1.000000e+03;
     // params_r_.mdl_linearpropcorrections = 0;
@@ -374,7 +375,7 @@ void madMela::initialize_madMELA(){
     // params_r_.mdl_yms =  TUtil::GetMass(3);
     // params_r_.mdl_ymc =  TUtil::GetMass(4);
     // params_r_.mdl_ymb =  TUtil::GetMass(5);
-    params_r_.mdl_yt =  TUtil::GetMass(6);
+    // params_r_.mdl_ymt =  TUtil::GetMass(6);
 
     // params_r_.mdl_yme =   TUtil::GetMass(11);
     // params_r_.mdl_ymm =   TUtil::GetMass(13);
@@ -513,7 +514,7 @@ std::vector<std::vector<int>> madMela::get_pdg_order(
         columns = 261;
         int pdg[8][261];
         int allproc[261];
-        VBSSIG_get_pdg_order_(pdg, allproc);
+        VBSBSI_get_pdg_order_(pdg, allproc);
 
         for(int i = 0; i < rows; i++){
             std::vector<int> row;

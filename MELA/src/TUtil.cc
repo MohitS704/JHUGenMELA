@@ -4304,6 +4304,7 @@ void TUtil::SetMCFMSpinZeroCouplings(bool useBSM, SpinZeroCouplings const* Hcoup
   }
 }
 void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
+  MELAout << "TUtil::SetMCFMaTQGCCouplings: useBSM = " << useBSM << endl;
   if (!useBSM){
     for (int im=0; im<2; im++){
       if (im==0){
@@ -4318,6 +4319,7 @@ void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
         spinzerohiggs_anomcoupl_.dZZWpWm[im] = 1;
         spinzerohiggs_anomcoupl_.dZAWpWm[im] = 1;
         spinzerohiggs_anomcoupl_.dAAWpWm[im] = 1;
+        spinzerohiggs_anomcoupl_.alpha_SMEW[im] = 1;
       }
       else{
         spinzerohiggs_anomcoupl_.dV_A[im] = 0;
@@ -4331,6 +4333,7 @@ void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
         spinzerohiggs_anomcoupl_.dZZWpWm[im] = 0;
         spinzerohiggs_anomcoupl_.dZAWpWm[im] = 0;
         spinzerohiggs_anomcoupl_.dAAWpWm[im] = 0;
+        spinzerohiggs_anomcoupl_.alpha_SMEW[im] = 0;
       }
       spinzerohiggs_anomcoupl_.dFour_A[im] = 0;
       spinzerohiggs_anomcoupl_.dFour_Z[im] = 0;
@@ -4351,6 +4354,7 @@ void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
       spinzerohiggs_anomcoupl_.dAAWpWm[im] = (couplings->aTQGCcoupl)[gATQGC_dAAWpWm][im];
       spinzerohiggs_anomcoupl_.dZAWpWm[im] = (couplings->aTQGCcoupl)[gATQGC_dZAWpWm][im];
       spinzerohiggs_anomcoupl_.dZZWpWm[im] = (couplings->aTQGCcoupl)[gATQGC_dZZWpWm][im];
+      spinzerohiggs_anomcoupl_.alpha_SMEW[im] = (couplings->aTQGCcoupl)[gAlpha_SMEW][im];
     }
   }
 }

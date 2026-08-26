@@ -1871,6 +1871,8 @@ PYBIND11_MODULE(Mela, m) {
 
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDaTQGCcoupl, dZZWpWm, gATQGC_dZZWpWm)
 
+        MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDaTQGCcoupl, alpha_SMEW, gAlpha_SMEW)
+
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, reZ, gAZff_ZllRH)
 
         MAKE_COUPLING_REAL_IMAGINARY_SPIN_ONETWO(selfDAZffcoupl, leZ, gAZff_ZllLH)
@@ -2294,6 +2296,7 @@ PYBIND11_MODULE(Mela, m) {
         .value("gATQGC_dAAWpWm", gATQGC_dAAWpWm)
         .value("gATQGC_dZAWpWm", gATQGC_dZAWpWm)
         .value("gATQGC_dZZWpWm", gATQGC_dZZWpWm)
+        .value("gAlpha_SMEW", gAlpha_SMEW)
         .value("SIZE_ATQGC", SIZE_ATQGC);
 
     py::enum_<CouplingIndex_AZff>(m, "CouplingIndex_AZff")

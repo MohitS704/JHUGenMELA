@@ -24,14 +24,13 @@ static_assert(sizeof(std::array<double,2>) == sizeof(double)*2);
 namespace madMela{
     extern "C"{
         extern struct{
-            double mdl_mz,mdl_mw,mdl_mt,mdl_mh,mdl_mw1,
-            mdl_mz1,mdl_me,mdl_mmu,mdl_mta,mdl_mh1,mdl_ms,mdl_md,mdl_mu,
-            mdl_mc,mdl_mt1;
+            double mdl_mt1,mdl_mh,mdl_mt,mdl_mw1,mdl_mz1,mdl_mz,
+            mdl_mw,mdl_mh1;
         }mad_masses_;
 
         extern struct{
-            double mdl_wz1,mdl_wz,mdl_wh1,mdl_wt,mdl_wh,mdl_wt1,
-            mdl_ww,mdl_ww1;
+            double mdl_wz1,mdl_wz,mdl_wt1,mdl_wh1,mdl_ww1,mdl_wh,
+            mdl_ww,mdl_wt;
         }widths_;
 
         extern struct{
