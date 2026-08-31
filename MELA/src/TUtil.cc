@@ -4304,7 +4304,6 @@ void TUtil::SetMCFMSpinZeroCouplings(bool useBSM, SpinZeroCouplings const* Hcoup
   }
 }
 void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
-  MELAout << "TUtil::SetMCFMaTQGCCouplings: useBSM = " << useBSM << endl;
   if (!useBSM){
     for (int im=0; im<2; im++){
       if (im==0){
