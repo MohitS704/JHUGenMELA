@@ -4336,6 +4336,7 @@ void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
       }
       spinzerohiggs_anomcoupl_.dFour_A[im] = 0;
       spinzerohiggs_anomcoupl_.dFour_Z[im] = 0;
+      spinzerohiggs_anomcoupl_.cW[im] = 0;
     }
   }
   else{
@@ -4354,6 +4355,7 @@ void TUtil::SetMCFMaTQGCCouplings(bool useBSM, aTQGCCouplings const* couplings){
       spinzerohiggs_anomcoupl_.dZAWpWm[im] = (couplings->aTQGCcoupl)[gATQGC_dZAWpWm][im];
       spinzerohiggs_anomcoupl_.dZZWpWm[im] = (couplings->aTQGCcoupl)[gATQGC_dZZWpWm][im];
       spinzerohiggs_anomcoupl_.alpha_SMEW[im] = (couplings->aTQGCcoupl)[gAlpha_SMEW][im];
+      spinzerohiggs_anomcoupl_.cW[im] = (couplings->aTQGCcoupl)[gCW][im];
     }
   }
 }
