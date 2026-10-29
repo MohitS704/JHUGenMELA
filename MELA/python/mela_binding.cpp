@@ -1995,6 +1995,7 @@ PYBIND11_MODULE(Mela, m) {
         // MAKE_COUPLING_MADMELA(mdl_clequ3im, gMDL_clequ3im);
 
     py::enum_<TVar::VerbosityLevel>(m, "VerbosityLevel", py::arithmetic())
+        .value("NOPRINTOUT",TVar::NOPRINTOUT)
         .value("SILENT",TVar::SILENT)
         .value("ERROR",TVar::ERROR)
         .value("INFO",TVar::INFO)

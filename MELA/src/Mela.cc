@@ -62,7 +62,7 @@ Mela::Mela(
   auxiliaryProb(0.),
   melaCand(0)
 {
-  this->printLogo();
+  if (myVerbosity_ >= TVar::SILENT) this->printLogo();
   if (myVerbosity_>=TVar::DEBUG) MELAout << "Start Mela constructor" << endl;
   build(mh_);
   if (myVerbosity_>=TVar::DEBUG) MELAout << "End Mela constructor" << endl;

@@ -381,8 +381,8 @@ void madMela::initialize_madMELA(){
     // params_r_.mdl_ymm =   TUtil::GetMass(13);
     // params_r_.mdl_ymtau = TUtil::GetMass(15);
 
-    params_r_.mdl_aew = 7.815553e-03;
-    params_r_.mdl_gf = 1.166379e-05;
+    params_r_.mdl_aew = em_.aemmz; //7.815553e-03;
+    params_r_.mdl_gf = ewcouple_.Gf; //1.166379e-05;
     params_r_.as = qcdcouple_.as; //1.179000e-01;
 
     setDefaultMadgraphValues();

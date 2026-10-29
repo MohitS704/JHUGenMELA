@@ -1496,6 +1496,7 @@ void TUtil::SetMass(double inmass, int ipart){
   if (runcoupling_mcfm || runcoupling_jhugen){
     SetEwkCouplingParameters(ewcouple_.Gf, em_.aemmz, masses_mcfm_.wmass, masses_mcfm_.zmass, ewcouple_.xw, ewscheme_.ewscheme);
     madMela::params_r_.mdl_gf = ewcouple_.Gf;
+    madMela::params_r_.mdl_aew = em_.aemmz;
     madMela::params_r_.as = qcdcouple_.as;
   }
 }

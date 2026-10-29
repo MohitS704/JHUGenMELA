@@ -389,7 +389,7 @@ void ZZMatrixElement::computeXS(
 
   if (melaCand){
     double zzmass = melaCand->m();
-    if (processME == TVar::MCFM){
+    if (processME == TVar::MCFM || processME == TVar::MADGRAPH){
       for (int jh=0; jh<(int)nSupportedHiggses; jh++) Xcal2.SetHiggsMass(mHiggs[jh], wHiggs[jh], jh+1);
     }
     

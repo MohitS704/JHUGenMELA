@@ -45,12 +45,13 @@ namespace TVar{
     CandidateDecay_GG
   };
   enum VerbosityLevel {
-    SILENT = 0,
-    ERROR = 1,
-    INFO = 2,
-    DEBUG = 3,
-    DEBUG_VERBOSE = 4,
-    DEBUG_MECHECK = 5
+    NOPRINTOUT = 0,
+    SILENT = 1,
+    ERROR = 2,
+    INFO = 3,
+    DEBUG = 4,
+    DEBUG_VERBOSE = 5,
+    DEBUG_MECHECK = 6
   };
   enum MatrixElement{
     MCFM = 0,

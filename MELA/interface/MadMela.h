@@ -24,37 +24,42 @@ static_assert(sizeof(std::array<double,2>) == sizeof(double)*2);
 namespace madMela{
     extern "C"{
         extern struct{
-            double mdl_mt1,mdl_mh,mdl_mt,mdl_mw1,mdl_mz1,mdl_mz,
-            mdl_mw,mdl_mh1;
+            double mdl_mz,mdl_mw,mdl_mt,mdl_mh,mdl_mw1,
+            mdl_mz1,mdl_me,mdl_mmu,mdl_mta,mdl_mh1,mdl_ms,mdl_md,mdl_mu,
+            mdl_mc,mdl_mt1;
         }mad_masses_;
 
         extern struct{
-            double mdl_wz1,mdl_wz,mdl_wt1,mdl_wh1,mdl_ww1,mdl_wh,
-            mdl_ww,mdl_wt;
+            double mdl_wz1,mdl_wz,mdl_wh1,mdl_wt,mdl_wh,mdl_wt1,
+            mdl_ww,mdl_ww1;
         }widths_;
 
         extern struct{
-            double as,mdl_aew,mdl_barlam,mdl_ch,
-            mdl_chb,mdl_chbox,mdl_chbtil,mdl_chdd,
-            mdl_chg,mdl_chj3,mdl_chl3,mdl_chw,
-            mdl_chwb,mdl_chwbtil,mdl_chwtil,mdl_conjg__cthh,
-            mdl_cth,mdl_cth__exp__2,mdl_cth__exp__3,mdl_cw,
-            mdl_cwtil,mdl_dg1,mdl_dgf,mdl_dgw,
-            mdl_dkh,mdl_dmh2,mdl_dwh,mdl_dwhb,
-            mdl_dwhc,mdl_dwhta,mdl_dww,mdl_ee,
+            double as,mdl_aew,mdl_barlam,mdl_cbbre,
+            mdl_cbwre,mdl_ch,mdl_chb,mdl_chbox,
+            mdl_chbq,mdl_chbtil,mdl_chd,mdl_chdd,
+            mdl_che,mdl_chg,mdl_chj1,mdl_chj3,
+            mdl_chl1,mdl_chl3,mdl_chq1,mdl_chq3,
+            mdl_chu,mdl_chw,mdl_chwb,mdl_chwbtil,
+            mdl_chwtil,mdl_conjg__cthh,mdl_cth,mdl_cth__exp__2,
+            mdl_cth__exp__3,mdl_cw,mdl_cwtil,mdl_dg1,
+            mdl_dgf,mdl_dgw,mdl_dkh,mdl_dmh2,
+            mdl_dmz2,mdl_dwh,mdl_dwhb,mdl_dwhc,
+            mdl_dwhta,mdl_dww,mdl_dwz,mdl_ee,
             mdl_ee__exp__2,mdl_ee__exp__3,mdl_g1,mdl_g1sh,
             mdl_gf,mdl_ghaa,mdl_ghgg1,mdl_ghgg2,
             mdl_ghgg3,mdl_ghgg4,mdl_ghgg5,mdl_ghza,
             mdl_gw,mdl_gwsh,mdl_g__exp__2,mdl_lam,
-            mdl_lambdasmeft,mdl_lambdasmeft__exp__2,mdl_mh__exp__2,mdl_mh__exp__4,
-            mdl_mh__exp__6,mdl_mt__exp__2,mdl_mwsm,mdl_mwsm__exp__2,
-            mdl_mwsm__exp__4,mdl_mwsm__exp__6,mdl_mw__exp__2,mdl_mz__exp__2,
-            mdl_mz__exp__3,mdl_mz__exp__4,mdl_mz__exp__6,mdl_nb__10__exp___m_40,
-            mdl_nb__2__exp__0_25,mdl_sqrt__2,mdl_sqrt__aew,mdl_sqrt__as,
-            mdl_sqrt__gf,mdl_sqrt__sth2,mdl_sth,mdl_sth2,
-            mdl_sth__exp__2,mdl_sth__exp__3,mdl_sth__exp__4,mdl_sth__exp__5,
-            mdl_sth__exp__6,mdl_vev,mdl_vevhat,mdl_vevhat__exp__2,
-            mdl_vevhat__exp__3,mdl_vevt,mdl_ymt,mdl_yt;
+            mdl_lambdasmeft,mdl_lambdasmeft__exp__2,mdl_mb,mdl_mb__exp__2,
+            mdl_mh__exp__2,mdl_mh__exp__4,mdl_mh__exp__6,mdl_mt__exp__2,
+            mdl_mwsm,mdl_mwsm__exp__2,mdl_mwsm__exp__4,mdl_mwsm__exp__6,
+            mdl_mw__exp__2,mdl_mz__exp__2,mdl_mz__exp__3,mdl_mz__exp__4,
+            mdl_mz__exp__6,mdl_nb__10__exp___m_40,mdl_nb__2__exp__0_25,mdl_sqrt__2,
+            mdl_sqrt__aew,mdl_sqrt__as,mdl_sqrt__gf,mdl_sqrt__sth2,
+            mdl_sth,mdl_sth2,mdl_sth__exp__2,mdl_sth__exp__3,
+            mdl_sth__exp__4,mdl_sth__exp__5,mdl_sth__exp__6,mdl_vev,
+            mdl_vevhat,mdl_vevhat__exp__2,mdl_vevhat__exp__3,mdl_vevt,
+            mdl_ymt,mdl_yt;
         }params_r_;
 
         extern struct{
