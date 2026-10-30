@@ -282,6 +282,8 @@ namespace{
     gMDL_cH,
     gMDL_cHbox,
     gMDL_cHW,
+    gMDL_cHWB,
+    gMDL_cHDD,
     gMDL_cHB,
     gMDL_cWtil,
     gMDL_cHWtil,

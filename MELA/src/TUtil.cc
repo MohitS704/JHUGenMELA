@@ -3549,10 +3549,9 @@ void TUtil::SetMadgraphSpinZeroCouplings(SpinZeroCouplings const* Hcouplings){
   madMela::params_r_.mdl_chw = Hcouplings->SMEFTSimcoupl[gMDL_cHW];
   madMela::params_r_.mdl_chb = Hcouplings->SMEFTSimcoupl[gMDL_cHB];
   
-  //Higgs-relevant couplings dropped for their swag being too tough
-  // (too many diagrams because they edit Z->ff couplings too)
-  // madMela::params_r_.mdl_chwb = Hcouplings->SMEFTSimcoupl[gMDL_chwb];
-  // madMela::params_r_.mdl_chdd = Hcouplings->SMEFTSimcoupl[gMDL_chdd];
+  //Higgs-relevant couplings where Z/gamma->ff couplings are dropped
+  madMela::params_r_.mdl_chwb = Hcouplings->SMEFTSimcoupl[gMDL_cHWB];
+  madMela::params_r_.mdl_chdd = Hcouplings->SMEFTSimcoupl[gMDL_cHDD];
 
   //Higgs-relevant couplings dropped for not being VBS-relevant
   // madMela::params_r_.mdl_chg = Hcouplings->SMEFTSimcoupl[gMDL_chg];
@@ -5488,6 +5487,7 @@ double TUtil::MadgraphMatEl(
 
   std::optional<TVar::simple_event_record> madMela_event = TUtil::Madgraph_chooser(process, production, verbosity, mela_event, nPDG);
   if(!madMela_event.has_value()){
+    delete[] p;
     return 0;
   }
 
@@ -5602,7 +5602,7 @@ double TUtil::MadgraphMatEl(
   );
 
   if(verbosity >= TVar::DEBUG) MELAout << " smatrixhel returns prob of " << MatElSq << endl;
-  delete p;
+  delete[] p;
   p = nullptr;
   return MatElSq;
 }
